@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <!-- 股票走势表 Graph View -->
+        <record id="view_stock_day_line_report_report_graph" model="ir.ui.view">
+            <field name="name">stock.day.line.report.graph</field>
+            <field name="model">stock.day.line.report</field>
+            <field name="arch" type="xml">
+                <graph string="股票走势" type="pivot">
+                    <field name="stock_id" type="col"/>
+                    <field name="date" type="row"/>
+                    <field name="close" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- 股票走势图表 Search View -->
+        <record id="view_stock_day_line_report_report_search" model="ir.ui.view">
+            <field name="name">stock.day.line.report.search</field>
+            <field name="model">stock.day.line.report</field>
+            <field name="arch" type="xml">
+                <search string="股票走势">
+                    <field name="stock_id"/>
+                    <group expand="1" string="Group By">
+                        <filter string="股票" name="group_stock_id" icon="terp-personal"
+                                context="{'group_by':'stock_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- 股票走势图表 Action -->
+        <record id="action_stock_day_line_report_report_stat_all" model="ir.actions.act_window">
+            <field name="name">股票走势分析</field>
+            <field name="res_model">stock.day.line.report</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">graph</field>
+            <field name="context">
+                {'group_by':[]}
+            </field>
+        </record>
+
+        <!-- 配置图表菜单 -->
+        <menuitem id="menu_stock_report" name="股票走势"
+                  parent="base.menu_reporting" sequence="1"/>
+
+        <!-- 添加菜单 -->
+        <menuitem
+                action="action_stock_day_line_report_report_stat_all"
+                id="menu_stock_day_line_report_report_all"
+                parent="menu_stock_report"
+                sequence="1"/>
+
+    </data>
+</openerp>

@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 资金状况视图 -->
+        <record model="ir.ui.view" id="stock_balance_form">
+            <field name="name">stock.balance.form</field>
+            <field name="model">stock.balance</field>
+
+            <field name="arch" type="xml">
+                <form string="stock.balance" version="7.0">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="asset_balance" string="资产总值"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="current_balance" string="当前余额"/>
+                            <field name="enable_balance" string="可用金额"/>
+                            <field name="market_value" string="证券市值"/>
+                            <field name="money_type" string="币种"/>
+                            <field name="pre_interest" string="预计利息"/>
+                        </group>
+
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_balance_tree">
+            <field name="name">stock.balance.tree</field>
+            <field name="model">stock.balance</field>
+            <field name="arch" type="xml">
+                <tree string="stock.balance">
+                    <field name="asset_balance" string="资产总值"/>
+                    <field name="current_balance" string="当前余额"/>
+                    <field name="enable_balance" string="可用金额"/>
+                    <field name="market_value" string="证券市值"/>
+                    <field name="money_type" string="币种"/>
+                    <field name="pre_interest" string="预计利息"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_balance">
+            <field name="name">资金状况</field>
+            <field name="res_model">stock.balance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

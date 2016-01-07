@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 委托单 -->
+        <record model="ir.ui.view" id="stock_entrust_form">
+            <field name="name">stock.entrust.form</field>
+            <field name="model">stock.entrust</field>
+
+            <field name="arch" type="xml">
+                <form string="stock.entrust" version="7.0">
+                    <header>
+                        <button name="button_cancel" string="取消" type="object" states="report" confirm="您确认取消吗?" />
+                        <field name="state" widget="statusbar" statusbar_visible="report,cancel" statusbar_colors='{"draft":"blue"}'/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <label string="委托单 "/>
+                                <field name="entrust_no" class="oe_inline" readonly="1"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="stock_id" string="股票"/>
+                            <field name="entrust_bs" string="买卖方向"/>
+                            <field name="entrust_price" string="委托价格"/>
+                            <field name="entrust_amount" string="委托数量"/>
+                            <field name="business_price" string="成交价格" options="{'create': false, 'create_edit': false}" readonly="1" />
+                            <field name="business_amount" string="成交数量" options="{'create': false, 'create_edit': false}" readonly="1" />
+                            <field name="report_time" string="申报时间" options="{'create': false, 'create_edit': false}" readonly="1" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_entrust_tree">
+            <field name="name">stock.entrust.tree</field>
+            <field name="model">stock.entrust</field>
+            <field name="arch" type="xml">
+                <tree string="stock.entrust">
+                    <field name="entrust_bs" string="买卖方向"/>
+                    <field name="report_time" string="申报时间"/>
+                    <field name="stock_name" string="证券名称"/>
+                    <field name="stock_code" string="证券代码"/>
+                    <field name="entrust_price" string="委托价格"/>
+                    <field name="entrust_amount" string="委托数量"/>
+                    <field name="business_amount" string="成交数量"/>
+                    <field name="business_price" string="成交价格"/>
+                    <field name="entrust_no" string="委托编号"/>
+                    <field name="state" string="委托状态"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_entrust">
+            <field name="name">委托单</field>
+            <field name="res_model">stock.entrust</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

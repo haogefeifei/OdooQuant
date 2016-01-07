@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 股票列表 -->
+        <record model="ir.ui.view" id="stock_basics_form">
+            <field name="name">stock.basics.form</field>
+            <field name="model">stock.basics</field>
+
+            <field name="arch" type="xml">
+                <form string="stock.basics" version="7.0">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="model_id" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" string="名称"/>
+                            </h1>
+                            <label for="license_plate" class="oe_edit_only"/>
+                            <br></br>
+                        </div>
+                        <div class="oe_right">
+                            <h2>
+                                <field name="code" string="代码"/>
+                            </h2>
+                        </div>
+                        <group col="2" string="基本信息">
+                            <group>
+                                <field name="industry" string="所属行业"/>
+                                <field name="area" string="地区"/>
+                                <field name="time_to_market" string="上市日期"/>
+                            </group>
+                        </group>
+                        <group col="2" string="基本数据">
+                            <group>
+                                <field name="pe" string="市盈率"/>
+                                <field name="pb" string="市净率"/>
+                                <field name="outstanding" string="流通股本"/>
+                                <field name="totals" string="总股本(万)"/>
+                                <field name="total_assets" string="总资产(万)"/>
+                                <field name="liquid_assets" string="流动资产"/>
+                            </group>
+                            <group>
+                                <field name="fixed_assets" string="固定资产"/>
+                                <field name="reserved" string="公积金"/>
+                                <field name="reserved_per_share" string="每股公积金"/>
+                                <field name="eps" string="每股收益"/>
+                                <field name="bvps" string="每股净资资产"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="日K数据" colpsan="4">
+                                <field name='line_ids' string="日数据">
+                                    <tree string="qh.line" colors="red:trend=='↑';green:trend=='↓'" editable="bottom">
+                                        <field name='date' string="时间"/>
+                                        <field name='p_change_str' string="涨跌幅"/>
+                                        <field name='volume' string="成交量"/>
+                                        <field name='turnover' string="换手率"/>
+                                        <field name="trend" string="趋势"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_basics_tree">
+            <field name="name">stock.basics.tree</field>
+            <field name="model">stock.basics</field>
+            <field name="arch" type="xml">
+                <tree string="stock.basics">
+                    <field name="name" string="名称"/>
+                    <field name="code" string="代码"/>
+                    <field name="industry" string="所属行业"/>
+                    <field name="pe" string="市盈率"/>
+                    <field name="pb" string="市净率"/>
+                    <field name="outstanding" string="流通股本"/>
+                    <field name="totals" string="总股本(万)"/>
+                    <field name="total_assets" string="总资产(万)"/>
+                    <field name="liquid_assets" string="流动资产"/>
+                    <field name="fixed_assets" string="固定资产"/>
+                    <field name="eps" string="每股收益"/>
+                    <field name="bvps" string="每股净资资产"/>
+                    <field name="time_to_market" string="上市日期"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_basics">
+            <field name="name">股票列表</field>
+            <field name="res_model">stock.basics</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

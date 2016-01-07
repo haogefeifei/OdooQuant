@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 持仓列表视图 -->
+        <record model="ir.ui.view" id="stock_position_form">
+            <field name="name">stock.position.form</field>
+            <field name="model">stock.position</field>
+
+            <field name="arch" type="xml">
+                <form string="stock.position" version="7.0">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="stock_name" string="证券名称"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="stock_code" string="证券代码"/>
+                            <field name="market_value" string="证券市值"/>
+                            <field name="last_price" string="最新价"/>
+                            <field name="keep_cost_price" string="保本价"/>
+                            <field name="income_balance" string="摊薄浮动盈亏"/>
+                            <field name="cost_price" string="摊薄成本价"/>
+                            <field name="enable_amount" string="可卖数量"/>
+                            <field name="current_amount" string="当前数量"/>
+                        </group>
+
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_position_tree">
+            <field name="name">stock.position.tree</field>
+            <field name="model">stock.position</field>
+            <field name="arch" type="xml">
+                <tree string="stock.position" colors="red:trend=='↑';green:trend=='↓'">
+                    <field name="stock_name" string="证券名称"/>
+                    <field name="stock_code" string="证券代码"/>
+                    <field name="market_value" string="证券市值"/>
+                    <field name="last_price" string="最新价"/>
+                    <field name="keep_cost_price" string="保本价"/>
+                    <field name="income_balance" string="摊薄浮动盈亏"/>
+                    <field name="cost_price" string="摊薄成本价"/>
+                    <field name="enable_amount" string="可卖数量"/>
+                    <field name="current_amount" string="当前数量"/>
+                    <field name="trend" string="盈亏"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_position">
+            <field name="name">持仓列表</field>
+            <field name="res_model">stock.position</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

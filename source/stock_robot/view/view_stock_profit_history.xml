@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 盈亏历史 -->
+        <record model="ir.ui.view" id="stock_profit_history_form">
+            <field name="name">stock.profit.history.form</field>
+            <field name="model">stock.profit.history</field>
+
+            <field name="arch" type="xml">
+                <form string="stock.profit.history" version="7.0">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="date" string="日期" size="40"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="day_profits" string="日盈亏额"/>
+                            <field name="unstable_profits" string="浮动盈亏"/>
+                            <field name="unstable_profits_rate" string="浮动盈亏率"/>
+                            <field name="sum_balance" string="盈亏"/>
+                            <field name="sum_balance_rate_str" string="盈亏率"/>
+                            <field name="total_account" string="账户总资产"/>
+                            <field name="market_value" string="市值"/>
+                            <field name="cash" string="现金"/>
+                            <field name="principal" string="本金"/>
+                        </group>
+
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="stock_profit_history_tree">
+            <field name="name">stock.profit.history.tree</field>
+            <field name="model">stock.profit.history</field>
+            <field name="arch" type="xml">
+                <tree string="stock.profit.history" colors="red:trend=='↑';green:trend=='↓'">
+                    <field name="date" string="日期"/>
+                    <field name="day_profits" string="日盈亏额"/>
+                    <field name="unstable_profits" string="浮动盈亏"/>
+                    <field name="unstable_profits_rate" string="浮动盈亏率"/>
+                    <field name="sum_balance" string="盈亏"/>
+                    <field name="sum_balance_rate_str" string="盈亏率"/>
+                    <field name="total_account" string="账户总资产"/>
+                    <field name="market_value" string="市值"/>
+                    <field name="cash" string="现金"/>
+                    <field name="principal" string="本金"/>
+                    <field name="trend" string="盈亏趋势"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_stock_profit_history">
+            <field name="name">盈亏历史</field>
+            <field name="res_model">stock.profit.history</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- base模块菜单配置文件 -->
+        <!-- 配置菜单 -->
+        <menuitem
+                name="股票管理"
+                id="menu_stock_robot"/>
+
+        <!-- 1 -->
+        <menuitem
+                name="我的股票"
+                id="menu_stock_management"
+                parent="menu_stock_robot"
+                sequence="1"/>
+        <menuitem
+                name="持仓列表"
+                id="menu_stock_position"
+                parent="menu_stock_management"
+                sequence="1"
+                action="action_stock_position"/>
+        <menuitem
+                name="资金管理"
+                id="menu_stock_balance"
+                parent="menu_stock_management"
+                sequence="2"
+                action="action_stock_balance"/>
+
+        <menuitem
+                name="委托单"
+                id="menu_stock_order"
+                parent="menu_stock_management"
+                sequence="3"
+                action="action_stock_entrust"/>
+
+        <menuitem
+                name="盈亏历史"
+                id="menu_stock_profit_history"
+                parent="menu_stock_management"
+                sequence="4"
+                action="action_stock_profit_history"/>
+
+        <!-- 2 -->
+        <menuitem
+                name="量化交易"
+                id="menu_stock_quant_management"
+                parent="menu_stock_robot"
+                sequence="2"/>
+        <menuitem
+                name="仓段管理"
+                id="menu_stock_section_list"
+                parent="menu_stock_quant_management"
+                sequence="1"
+                action="action_stock_position"/>
+        <menuitem
+                name="策略管理"
+                id="menu_stock_rules_management"
+                parent="menu_stock_quant_management"
+                sequence="2"
+                action="action_stock_position"/>
+        <menuitem
+                name="股票池"
+                id="menu_stock_optional_list"
+                parent="menu_stock_quant_management"
+                sequence="3"
+                action="action_stock_position"/>
+    </data>
+
+</openerp>

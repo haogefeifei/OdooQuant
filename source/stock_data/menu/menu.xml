@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!-- base模块菜单配置文件 -->
+        <!-- 配置菜单 -->
+        <menuitem
+                name="股票数据"
+                id="menu_stock_data"/>
+
+        <!-- 1 -->
+        <menuitem
+                name="基本数据"
+                id="menu_stock_data_base"
+                parent="menu_stock_data"
+                sequence="1"/>
+        <menuitem
+                name="股票列表"
+                id="menu_stock_basics"
+                parent="menu_stock_data_base"
+                sequence="1"
+                action="action_stock_basics"/>
+
+    </data>
+
+</openerp>
