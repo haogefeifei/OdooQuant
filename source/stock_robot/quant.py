@@ -15,7 +15,7 @@ class QtBalanceSection(osv.osv):
         "net_worth":fields.float(u"当前净值"),
         "init_worth":fields.float(u"初始净值"),
         "profits_rate":fields.float(u"盈利率"),
-        "profits_rate_str":fields.str(u"盈利率"),
+        "profits_rate_str":fields.char(u"盈利率"),
         'algorithm_id': fields.many2one('qt.algorithm', u'策略'),
     }
 

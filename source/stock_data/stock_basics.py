@@ -102,6 +102,7 @@ class StockBasics(osv.osv):
                     'bvps': float(s_bvps),
                     'time_to_market': s_time_to_market,
                 }, context=context)
+                cr.commit()
             else:
                 # log.debug("----------->该股票已经存在,更新数据" + str(s_code))
                 write_ids = basics_obj.search(cr, uid, [('code', '=', str(s_code))])
@@ -122,6 +123,7 @@ class StockBasics(osv.osv):
                     'bvps': float(s_bvps),
                     'time_to_market': s_time_to_market,
                 }, context=context)
+                cr.commit()
 
         # TODO 暂时注释掉更新日K数据
         return
