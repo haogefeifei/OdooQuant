@@ -1,0 +1,9 @@
+.icon-period-rolling:before {
+  content: "\e600";
+}
+.icon-period-last-full:before {
+  content: "\e602";
+}
+.icon-period-progress:before {
+  content: "\e601";
+}

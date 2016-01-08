@@ -1,0 +1,28 @@
+.readonly .jsoneditor .menu {
+    display: none;
+}
+
+
+.jsoneditor button.switch-mode.tree,
+.jsoneditor button.switch-mode.code {
+    background-image: none !important;
+    font-family: FontAwesome;
+    font-size: 16px;
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    z-index: 1;
+}
+
+
+.code .jsoneditor .outer,
+.code .jsoneditor textarea {
+    min-height: 200px;
+}
+
+.json-error {
+    color: #900;
+    border: 1px solid #900;
+    padding: 10px;
+    margin: 5px 0px;
+}

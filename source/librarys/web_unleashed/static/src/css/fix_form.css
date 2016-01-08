@@ -1,0 +1,7 @@
+/* bugfix #4462 */
+.oe_popup_form table.oe_form_group {
+    position: relative;
+}
+.oe_popup_form .oe_form_field_one2many {
+    position: relative;
+}

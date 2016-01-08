@@ -1,0 +1,29 @@
+/*!
+ * reset css conflict between twitter bootstrap and OpenERP css
+ */
+
+
+.bootstrap_scope button:hover,
+.bootstrap_scope button {
+    background-color: none !important;
+    background-image: none !important;
+    -moz-border-radius: none !important;
+    -webkit-border-radius: none !important;
+    border-radius: none !important;
+    -moz-box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    -webkit-font-smoothing: none !important;
+    outline: none !important;
+}
+
+
+.bootstrap_scope .btn {
+    text-decoration: none !important; 
+}
+
+.bootstrap_scope .btn-danger,
+.bootstrap_scope .btn-primary {
+color: #ffffff !important;
+}

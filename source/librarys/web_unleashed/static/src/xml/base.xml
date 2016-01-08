@@ -1,0 +1,9 @@
+<template>
+
+    
+    <!--
+    Empty template, useful for ItemView without element inside
+    -->
+    <t t-name="Base.Empty"></t>
+    
+</template>
