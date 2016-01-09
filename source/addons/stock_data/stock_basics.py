@@ -22,7 +22,7 @@ class StockBasics(osv.osv):
 
     def _code_to_symbol(self, code):
         """
-            生成symbol代码标志
+            生成symbol代码标志 @ tushare
         """
         if code in cons.INDEX_LABELS:
             return cons.INDEX_LIST[code]

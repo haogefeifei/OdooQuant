@@ -22,7 +22,7 @@
                             <br></br>
                         </div>
                         <group>
-                            <field name="stock_id" string="股票"/>
+                            <field name="stock_id" string="股票"  on_change="onchange_stock(stock_id)"/>
                             <field name="entrust_bs" string="买卖方向"/>
                             <field name="entrust_price" string="委托价格"/>
                             <field name="entrust_amount" string="委托数量"/>

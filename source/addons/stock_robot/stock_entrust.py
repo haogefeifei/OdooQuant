@@ -111,3 +111,22 @@ class StockEntrust(osv.osv):
         """
         # todo 待实现
         pass
+
+    def onchange_stock(self, cr, uid, ids, stock_id, context=None):
+        values = {'value': {}}
+        stock = self.pool.get('stock.basics').browse(cr, uid, stock_id, context=context)
+        values['value']['entrust_price'] = stock.current_price
+        return values
+
+
+
+
+
+
+
+
+
+
+
+
+
