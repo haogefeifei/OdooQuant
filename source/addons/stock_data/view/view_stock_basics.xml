@@ -54,7 +54,7 @@
                         <notebook>
                             <page string="日K数据" colpsan="4">
                                 <field name='line_ids' string="日数据">
-                                    <tree string="qh.line" colors="red:trend=='↑';green:trend=='↓'" editable="bottom">
+                                    <tree string="stock.name" colors="red:trend=='↑';green:trend=='↓'" editable="bottom">
                                         <field name='date' string="时间"/>
                                         <field name='p_change_str' string="涨跌幅"/>
                                         <field name='volume' string="成交量"/>

@@ -63,7 +63,7 @@
                 id="menu_stock_optional_list"
                 parent="menu_stock_quant_management"
                 sequence="3"
-                action="action_stock_position"/>
+                action="action_qt_algorithm_stock"/>
     </data>
 
 </openerp>

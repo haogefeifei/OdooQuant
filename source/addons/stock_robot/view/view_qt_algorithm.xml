@@ -20,6 +20,15 @@
                         <group>
                             <field name="key" string="key"/>
                         </group>
+                        <notebook>
+                            <page string="股票池" colpsan="4">
+                                <field name='stock_ids' string="股票池">
+                                    <tree string="stock.name" editable="bottom">
+                                        <field name='stock_id' string="股票"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
 
                 </form>
@@ -32,7 +41,7 @@
             <field name="arch" type="xml">
                 <tree string="qt.algorithm">
                     <field name="name" string="策略名称"/>
-                     <field name="key" string="key"/>
+                    <field name="key" string="key"/>
                 </tree>
             </field>
         </record>
