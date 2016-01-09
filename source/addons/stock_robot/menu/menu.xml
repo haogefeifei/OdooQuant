@@ -51,7 +51,7 @@
                 id="menu_stock_section_list"
                 parent="menu_stock_quant_management"
                 sequence="1"
-                action="action_stock_position"/>
+                action="action_qt_balance_section"/>
         <menuitem
                 name="策略管理"
                 id="menu_stock_rules_management"

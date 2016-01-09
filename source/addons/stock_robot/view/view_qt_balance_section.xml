@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 仓段视图 -->
+        <record model="ir.ui.view" id="qt_balance_section_form">
+            <field name="name">qt.balance.section.form</field>
+            <field name="model">qt.balance.section</field>
+
+            <field name="arch" type="xml">
+                <form string="qt.balance.section" version="7.0">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" string="仓段名称"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="net_worth" string="当前净值"/>
+                            <field name="init_worth" string="初始净值"/>
+                            <field name="profits_rate_str" string="盈利率"/>
+                            <field name="algorithm_id" string="策略"/>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="qt_balance_section_tree">
+            <field name="name">qt.balance.section.tree</field>
+            <field name="model">qt.balance.section</field>
+            <field name="arch" type="xml">
+                <tree string="qt.balance.section">
+                    <field name="name" string="仓段名称"/>
+                    <field name="net_worth" string="当前净值"/>
+                    <field name="init_worth" string="初始净值"/>
+                    <field name="profits_rate_str" string="盈利率"/>
+                    <field name="algorithm_id" string="策略"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_qt_balance_section">
+            <field name="name">仓段管理</field>
+            <field name="res_model">qt.balance.section</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>

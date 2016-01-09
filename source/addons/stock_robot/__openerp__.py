@@ -29,6 +29,7 @@
         'view/view_stock_profit_history.xml',
         'view/view_stock_balance.xml',
         'view/view_stock_entrust.xml',
+        'view/view_qt_balance_section.xml',
         'menu/menu.xml',
     ],
     'application': True,
