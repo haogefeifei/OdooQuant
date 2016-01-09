@@ -27,6 +27,7 @@ class StockEntrust(osv.osv):
         'report_time': fields.datetime(u"申报时间", required=True),
         'stock_code': fields.char(u"证券代码"),
         'stock_name': fields.char(u"证券名称"),
+        'pwd': fields.char(u"交易密码"),
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),
     }
 
@@ -41,6 +42,7 @@ class StockEntrust(osv.osv):
         'state': 'report',
         'business_price': 0.00,
         'business_amount': 0,
+        'entrust_amount': 100,
         'report_time': get_now_time,
     }
 
@@ -48,6 +50,9 @@ class StockEntrust(osv.osv):
         '''
          取消状态.
         '''
+
+        # todo 撤销真实的委托单
+
         self.write(cr, uid, ids, {'state': 'cancel'}, context=context)
         return True
 
@@ -57,11 +62,17 @@ class StockEntrust(osv.osv):
         """
         _logger.debug(u"run 委托单 -> create!")
 
+        # 检查交易密码
+        if vals['pwd'] != '666666':
+            raise osv.except_osv(u"错误", u"交易密码错误")
+
         # 首先要区分是买入还是卖出
         if vals['entrust_bs'] == 'buy':
             # 买入
 
-            # todo 可能要检查是否是买入时间
+            # todo 检查是否是买入时间
+
+            # todo 检查委托数量是否正确
 
             # 检查是否足够的资金操作
             CNY_balance = self.pool.get("stock.balance").get_CNY_balance(cr, uid, context)

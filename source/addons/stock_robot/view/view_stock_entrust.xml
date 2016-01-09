@@ -26,6 +26,7 @@
                             <field name="entrust_bs" string="买卖方向"/>
                             <field name="entrust_price" string="委托价格"/>
                             <field name="entrust_amount" string="委托数量"/>
+                            <field name="pwd" string="交易密码"/>
                             <field name="business_price" string="成交价格" options="{'create': false, 'create_edit': false}" readonly="1" />
                             <field name="business_amount" string="成交数量" options="{'create': false, 'create_edit': false}" readonly="1" />
                             <field name="report_time" string="申报时间" options="{'create': false, 'create_edit': false}" readonly="1" />
