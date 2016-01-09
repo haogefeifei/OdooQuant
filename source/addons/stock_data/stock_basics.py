@@ -2,10 +2,13 @@
 
 from openerp.osv import fields, osv
 from logbook import Logger, StreamHandler
+from utils import cons
 import logbook
 import tushare as ts
 import sys
 import os
+import urllib
+import string
 
 logbook.set_datetime_format('local')
 StreamHandler(sys.stdout).push_application()
@@ -17,6 +20,26 @@ class StockBasics(osv.osv):
     沪深上市公司股票
     """
 
+    def _code_to_symbol(self, code):
+        """
+            生成symbol代码标志
+        """
+        if code in cons.INDEX_LABELS:
+            return cons.INDEX_LIST[code]
+        else:
+            if len(code) != 6:
+                return ''
+            else:
+                return 'sh%s' % code if code[:1] in ['5', '6', '9'] else 'sz%s' % code
+
+    def _get_stock_current_price(self, cr, uid, ids, field_names, arg, context=None):
+        result = {}
+        for id in ids:
+            result[id] = {}
+            position_obj = self.browse(cr, uid, id, context=context)
+            result[id] = self.get_stock_now_price(position_obj.code)
+        return result
+
     _name = "stock.basics"
     _columns = {
         'name': fields.char(u"名称", required=True),
@@ -25,6 +48,7 @@ class StockBasics(osv.osv):
         'area': fields.char(u"地区"),
         'pe': fields.float(u"市盈率"),
         'pb': fields.float(u"市净率"),
+        'current_price': fields.function(_get_stock_current_price, type='float', method=True, help=u"当前价格"),
         'outstanding': fields.float(u"流通股本"),
         'totals': fields.float(u"总股本(万)"),
         'total_assets': fields.float(u"总资产(万)"),
@@ -37,6 +61,18 @@ class StockBasics(osv.osv):
         'time_to_market': fields.date(u"上市日期"),
         'line_ids': fields.one2many('stock.basics.day.line', 'stock_id', u'股票日K数据', help=u'股票日K数据'),
     }
+
+    def get_stock_now_price(self, stock_code):
+        """
+        获取股票的当前价格
+        :param stock_id: 股票id
+        :return:
+        """
+        code = self._code_to_symbol(stock_code)
+        data = urllib.urlopen("http://hq.sinajs.cn/list=" + code).read().decode('gb2312')
+        stockInfo = data.split(',')
+        currentPrice = string.atof(stockInfo[3])
+        return float(currentPrice)
 
     def run_get_stock_base_data(self, cr, uid, mail=[], context=None):
         """更新数据定时任务
@@ -157,7 +193,7 @@ class StockBasics(osv.osv):
                 while i < day_data_list.shape[0]:
                     s_data = day_data_list[i:i + 1]
                     s_date = s_data.index.values[0]
-                                # 涨跌趋势
+                    # 涨跌趋势
                     if s_data.p_change.values[0] > 0:
                         trend = "↑"
                     elif s_data.p_change.values[0] < 0:
@@ -173,7 +209,7 @@ class StockBasics(osv.osv):
                         'volume': s_data.volume.values[0],
                         'price_change': s_data.price_change.values[0],
                         'p_change': s_data.p_change.values[0],
-                        'p_change_str': str("%.2f"%(s_data.p_change.values[0])) + "%",
+                        'p_change_str': str("%.2f" % (s_data.p_change.values[0])) + "%",
                         'ma5': s_data.ma5.values[0],
                         'ma10': s_data.ma10.values[0],
                         'ma20': s_data.ma20.values[0],
