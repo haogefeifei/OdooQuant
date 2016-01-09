@@ -14,7 +14,7 @@ class StockEntrust(osv.osv):
     """
 
     _name = "stock.entrust"
-    _order = "report_time desc"
+    _order = "id desc"
 
     _columns = {
         'business_amount': fields.integer(u"成交数量", size=32, required=True),
@@ -23,7 +23,10 @@ class StockEntrust(osv.osv):
         'entrust_bs': fields.selection((('buy', u'买入'), ('sale', u'卖出')), u'买卖方向'),
         'entrust_no': fields.integer(u"委托编号", required=True),
         'entrust_price': fields.char(u"委托价格", required=True),
-        'state': fields.selection((('cancel', u'废单'), ('report', u'已报')), u'委托状态'),
+        'state': fields.selection((
+            ('done', u'已成'),
+            ('cancel', u'废单'),
+            ('report', u'已报')), u'委托状态'),
         'report_time': fields.datetime(u"申报时间", required=True),
         'stock_code': fields.char(u"证券代码"),
         'stock_name': fields.char(u"证券名称"),
@@ -79,10 +82,9 @@ class StockEntrust(osv.osv):
 
             if CNY_balance is None:
                 raise osv.except_osv(u"错误", u"没有可用的人民币资产")
-            # _logger.debug(u"--->可用资金:" + str(CNY_balance.enable_balance))
 
             # 如果可用资金不足以买入股票
-            handle_balance = vals['entrust_amount'] * vals['entrust_price']
+            handle_balance = vals['entrust_amount'] * float(vals['entrust_price'])
             if CNY_balance.enable_balance < handle_balance:
                 raise osv.except_osv(u"错误", u"可用资金不足,无法买入")
 
@@ -128,16 +130,3 @@ class StockEntrust(osv.osv):
         stock = self.pool.get('stock.basics').browse(cr, uid, stock_id, context=context)
         values['value']['entrust_price'] = stock.current_price
         return values
-
-
-
-
-
-
-
-
-
-
-
-
-

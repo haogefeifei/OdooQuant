@@ -32,7 +32,7 @@ class StockBalance(osv.osv):
         if len(ids) < 1:
             return None
         res = balance_cr.browse(cr, uid, ids, context=context)
-        return res[0]
+        return res
 
     def update_balance(self, cr, uid, context=None):
         """
