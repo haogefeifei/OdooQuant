@@ -30,6 +30,7 @@
         'view/view_stock_balance.xml',
         'view/view_stock_entrust.xml',
         'view/view_qt_balance_section.xml',
+        'view/view_qt_algorithm.xml',
         'menu/menu.xml',
     ],
     'application': True,

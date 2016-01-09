@@ -57,7 +57,7 @@
                 id="menu_stock_rules_management"
                 parent="menu_stock_quant_management"
                 sequence="2"
-                action="action_stock_position"/>
+                action="action_qt_algorithm"/>
         <menuitem
                 name="股票池"
                 id="menu_stock_optional_list"

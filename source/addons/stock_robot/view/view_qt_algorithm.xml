@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<openerp>
+    <data>
+
+        <!-- 策略视图 -->
+        <record model="ir.ui.view" id="qt_algorithm_form">
+            <field name="name">qt.algorithm.form</field>
+            <field name="model">qt.algorithm</field>
+            <field name="arch" type="xml">
+                <form string="qt.algorithm" version="7.0">
+                    <header>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" string="策略名称"/>
+                            </h1>
+                            <br></br>
+                        </div>
+                        <group>
+                            <field name="key" string="key"/>
+                        </group>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="qt_algorithm_tree">
+            <field name="name">qt.algorithm.tree</field>
+            <field name="model">qt.algorithm</field>
+            <field name="arch" type="xml">
+                <tree string="qt.algorithm">
+                    <field name="name" string="策略名称"/>
+                     <field name="key" string="key"/>
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_qt_algorithm">
+            <field name="name">策略管理</field>
+            <field name="res_model">qt.algorithm</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+    </data>
+</openerp>
