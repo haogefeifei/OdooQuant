@@ -74,6 +74,11 @@ class StockBasics(osv.osv):
         currentPrice = string.atof(stockInfo[3])
         return float(currentPrice)
 
+    def get_stock_code(self, cr, uid, id, context=None):
+        basics_obj = self.pool.get('stock.basics')
+        stock = basics_obj.browse(cr, uid, id, context=context)
+        return stock.code
+
     def run_get_stock_base_data(self, cr, uid, mail=[], context=None):
         """更新数据定时任务
         """

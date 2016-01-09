@@ -15,7 +15,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <field name="stock_name" string="证券名称"/>
+                                <field name="stock_id" string="证券名称"/>
                             </h1>
                             <br></br>
                         </div>
@@ -41,7 +41,7 @@
             <field name="model">stock.position</field>
             <field name="arch" type="xml">
                 <tree string="stock.position" colors="red:trend=='↑';green:trend=='↓'">
-                    <field name="stock_name" string="证券名称"/>
+                    <field name="stock_id" string="证券名称"/>
                     <field name="stock_code" string="证券代码"/>
                     <field name="market_value" string="证券市值"/>
                     <field name="last_price" string="最新价"/>
