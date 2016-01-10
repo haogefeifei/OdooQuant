@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields, osv
+from quant_trader import *
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class StockPosition(osv.osv):
     """
@@ -46,3 +49,20 @@ class StockPosition(osv.osv):
         """
         # todo 待实现
         pass
+
+    def run_update(self, cr, uid, context=None):
+        """
+        更新持仓/资金/委托单信息
+        """
+        _logger.debug(u"run -----> 更新持仓/资金/委托单信息!")
+
+        trader = Trader().trader
+        out(trader.balance)
+        out(trader.position)
+
+        # todo 更新资金信息
+
+        # todo 更新持仓信息
+
+        # todo 更新委托单信息
+
