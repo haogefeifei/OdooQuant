@@ -32,6 +32,7 @@ class StockEntrust(osv.osv):
         'stock_name': fields.char(u"证券名称"),
         'pwd': fields.char(u"交易密码"),
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),
+        'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
     }
 
     def get_now_time(self, cr, uid, ids, context=None):
@@ -101,6 +102,7 @@ class StockEntrust(osv.osv):
 
         # todo 更新资金
 
+        vals['pwd'] = "******"  # 处理掉交易密码
         return super(StockEntrust, self).create(cr, uid, vals, context)
 
     def buy_stock(self, cr, uid, context=None):
@@ -130,3 +132,10 @@ class StockEntrust(osv.osv):
         stock = self.pool.get('stock.basics').browse(cr, uid, stock_id, context=context)
         values['value']['entrust_price'] = stock.current_price
         return values
+
+    def update(self, cr, uid, ids, context=None):
+        """
+        委托单
+        """
+        # todo 待实现
+        pass

@@ -39,3 +39,10 @@ class StockPosition(osv.osv):
         'current_amount': fields.integer(u"当前数量", size=64, required=True),
         'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势")
     }
+
+    def update(self, cr, uid, ids, context=None):
+        """
+        更新持仓股票
+        """
+        # todo 待实现
+        pass

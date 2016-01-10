@@ -4,4 +4,5 @@ import stock_balance
 import stock_position
 import stock_entrust
 import stock_profit_history
-import quant
+import quant_algorithm
+import quant_section

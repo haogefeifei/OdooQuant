@@ -34,7 +34,7 @@ class StockBalance(osv.osv):
         res = balance_cr.browse(cr, uid, ids, context=context)
         return res
 
-    def update_balance(self, cr, uid, context=None):
+    def update(self, cr, uid, context=None):
         """
         更新资产状况
         :param cr:

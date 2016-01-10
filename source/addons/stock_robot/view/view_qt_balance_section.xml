@@ -18,14 +18,34 @@
                             </h1>
                             <br></br>
                         </div>
+                        <div class="oe_right">
+                            <h2>
+                                <field name="profits_rate_str" string="盈利率"/>
+                            </h2>
+                        </div>
                         <group>
                             <field name="net_worth" string="当前净值"/>
                             <field name="init_worth" string="初始净值"/>
-                            <field name="profits_rate_str" string="盈利率"/>
                             <field name="algorithm_id" string="策略"/>
                         </group>
+                        <notebook>
+                            <page string="操作记录" colpsan="4">
+                                <field name='move_ids' string="操作记录">
+                                    <tree string="stock.entrust.report_time" editable="bottom">
+                                        <field name='report_time' string="时间"/>
+                                        <field name="entrust_bs" string="买卖方向"/>
+                                        <field name="stock_id" string="股票"/>
+                                        <field name="entrust_price" string="委托价格"/>
+                                        <field name="entrust_amount" string="委托数量"/>
+                                        <field name="business_amount" string="成交数量"/>
+                                        <field name="business_price" string="成交价格"/>
+                                        <field name="entrust_no" string="委托编号"/>
+                                        <field name="state" string="委托状态"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
                     </sheet>
-
                 </form>
             </field>
         </record>
