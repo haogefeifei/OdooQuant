@@ -36,7 +36,7 @@ class StockProfitHistory(osv.osv):
             sum_balance_rate = 0
             if history_obj.principal != 0:
                 history_obj.sum_balance / history_obj.principal
-            sum_balance_rate_str = str("%.2f"%(sum_balance_rate * 100)) + "%"
+            sum_balance_rate_str = str("%.2f" % (sum_balance_rate * 100)) + "%"
             # 浮动盈亏率
             unstable_profits_rate = 0
 
@@ -65,19 +65,26 @@ class StockProfitHistory(osv.osv):
         'date': fields.date(u'日期', required=True),
         'day_profits': fields.float(u"日盈亏额", size=32, required=True),
         'unstable_profits': fields.float(u"浮动盈亏", size=32, required=True),
-        'unstable_profits_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True, string=u"浮动盈亏率"),
-        'unstable_profits_rate_str': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True, string=u"浮动盈亏率"),
+        'unstable_profits_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True,
+                                                 string=u"浮动盈亏率"),
+        'unstable_profits_rate_str': fields.function(_get_line_profit_rate, type='char', multi="profit_line",
+                                                     method=True, string=u"浮动盈亏率"),
         'sum_balance': fields.float(u"盈亏", size=32, required=True),
-        'sum_balance_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True, string=u"盈亏率"),
-        'sum_balance_rate_str': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True, string=u"盈亏率"),
+        'sum_balance_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True,
+                                            string=u"盈亏率"),
+        'sum_balance_rate_str': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True,
+                                                string=u"盈亏率"),
         'total_account': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True,
                                          string=u"账户总资产"),
         'market_value': fields.float(u"市值", size=32, required=True),
         'cash': fields.float(u"现金", size=32, required=True),
         'principal': fields.float(u"本金", size=32, required=True),
-        'trend': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True, help=u"涨跌趋势")
+        'trend': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True, help=u"涨跌趋势"),
+        'is_section': fields.boolean(u"是否是仓段盈亏记录", required=True),
+        'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
     }
 
     _defaults = {
-        'date': fields.date.context_today
+        'date': fields.date.context_today,
+        'is_section': False
     }

@@ -29,6 +29,8 @@
                             <field name="market_value" string="市值"/>
                             <field name="cash" string="现金"/>
                             <field name="principal" string="本金"/>
+                            <field name="is_section" string="仓段盈亏记录"/>
+                            <field name="section_id" string="所属仓段"/>
                         </group>
 
                     </sheet>
@@ -52,8 +54,21 @@
                     <field name="market_value" string="市值"/>
                     <field name="cash" string="现金"/>
                     <field name="principal" string="本金"/>
+                    <field name="section_id" string="所属仓段"/>
                     <field name="trend" string="盈亏趋势"/>
                 </tree>
+            </field>
+        </record>
+        
+                
+        <record model="ir.ui.view" id="view_stock_profit_history_search">
+            <field name="name">sstock.profit.history.view</field>
+            <field name="model">stock.profit.history</field>
+            <field name="arch" type="xml">
+                <search string="Entrust Session">
+                    <filter name="is_section_filter" string="总盈利"
+                            domain="[('is_section', '=', False)]"/>
+                </search>
             </field>
         </record>
 
@@ -62,6 +77,8 @@
             <field name="res_model">stock.profit.history</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+             <field name="search_view_id" ref="view_stock_profit_history_search"/>
+            <field name="context">{'search_default_is_section_filter':True}</field>
         </record>
 
     </data>

@@ -30,9 +30,45 @@
                             <field name="algorithm_id" string="策略"/>
                         </group>
                         <notebook>
+                            <page string="持仓股票" colpsan="4">
+                                <field name='position_ids' string="持仓股票">
+                                    <tree string="stock.entrust.report_time" colors="red:trend=='↑';green:trend=='↓'"
+                                          editable="bottom">
+                                        <field name="stock_id" string="证券名称"/>
+                                        <field name="market_value" string="证券市值"/>
+                                        <field name="last_price" string="最新价"/>
+                                        <field name="keep_cost_price" string="保本价"/>
+                                        <field name="income_balance" string="摊薄浮动盈亏"/>
+                                        <field name="cost_price" string="摊薄成本价"/>
+                                        <field name="enable_amount" string="可卖数量"/>
+                                        <field name="current_amount" string="当前数量"/>
+                                        <field name="trend" string="盈亏"/>
+                                    </tree>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="weight_total">
+
+                                </group>
+                                <div class="oe_clear"/>
+                                <label string="盈亏历史"/>
+                                <field name='history_ids'>
+                                    <tree string="stock.profit.history" colors="red:trend=='↑';green:trend=='↓'">
+                                        <field name="date" string="日期"/>
+                                        <field name="day_profits" string="日盈亏额"/>
+                                        <field name="unstable_profits" string="浮动盈亏"/>
+                                        <field name="unstable_profits_rate" string="浮动盈亏率"/>
+                                        <field name="sum_balance" string="盈亏"/>
+                                        <field name="sum_balance_rate_str" string="盈亏率"/>
+                                        <field name="total_account" string="总资产"/>
+                                        <field name="market_value" string="市值"/>
+                                        <field name="cash" string="现金"/>
+                                        <field name="trend" string="盈亏趋势"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="操作记录" colpsan="4">
                                 <field name='move_ids' string="操作记录">
-                                    <tree string="stock.entrust.report_time" editable="bottom">
+                                    <tree string="stock.entrust.report_time"
+                                          colors="grey:state=='cancel';blue:state=='done'" editable="bottom">
                                         <field name='report_time' string="时间"/>
                                         <field name="entrust_bs" string="买卖方向"/>
                                         <field name="stock_id" string="股票"/>

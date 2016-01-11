@@ -28,6 +28,7 @@
                             <field name="cost_price" string="摊薄成本价"/>
                             <field name="enable_amount" string="可卖数量"/>
                             <field name="current_amount" string="当前数量"/>
+                            <field name="section_id" string="所属仓段"/>
                         </group>
 
                     </sheet>
@@ -50,6 +51,7 @@
                     <field name="cost_price" string="摊薄成本价"/>
                     <field name="enable_amount" string="可卖数量"/>
                     <field name="current_amount" string="当前数量"/>
+                    <field name="section_id" string="所属仓段"/>
                     <field name="trend" string="盈亏"/>
                 </tree>
             </field>

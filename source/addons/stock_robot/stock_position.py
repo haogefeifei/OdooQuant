@@ -41,7 +41,8 @@ class StockPosition(osv.osv):
         'cost_price': fields.float(u"摊薄成本价", size=64, required=True),
         'enable_amount': fields.integer(u"可卖数量", size=64, required=True),
         'current_amount': fields.integer(u"当前数量", size=64, required=True),
-        'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势")
+        'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势"),
+        'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
     }
 
     def update_position(self, cr, uid, context=None):
