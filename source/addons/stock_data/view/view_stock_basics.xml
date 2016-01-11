@@ -16,12 +16,11 @@
                         <div class="oe_title">
                             <label for="model_id" class="oe_edit_only"/>
                             <h1>
-                                <field name="name" string="名称"/>
+                                <field name="name" class="oe_inline" string="名称"/>
+                                <label string="  "/>
+                                <field name="code" class="oe_inline" string="代码"/>
                             </h1>
                             <label for="license_plate" class="oe_edit_only"/>
-                            <h2>
-                                <field name="code" string="代码"/>
-                            </h2>
                             <br></br>
                         </div>
                         <div class="oe_right">

@@ -19,9 +19,10 @@
                             <br></br>
                         </div>
                         <div class="oe_right">
-                            <h2>
-                                <field name="profits_rate_str" string="盈利率"/>
-                            </h2>
+                            <h1>
+                                <label string="盈利率"/>
+                                <field name="profits_rate_str" class="oe_inline" string="盈利率"/>
+                            </h1>
                         </div>
                         <group>
                             <field name="net_worth" string="当前净值"/>

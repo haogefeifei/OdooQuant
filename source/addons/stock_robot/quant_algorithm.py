@@ -24,6 +24,7 @@ class QtAlgorithmStock(osv.osv):
     """
 
     _name = "qt.algorithm.stock"
+    _rec_name = 'stock_id'
     _columns = {
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),
         'algorithm_id': fields.many2one('qt.algorithm', u'策略'),

@@ -9,6 +9,7 @@ class StockBalance(osv.osv):
     """
 
     _name = "stock.balance"
+    _rec_name = 'money_type'
 
     _columns = {
         'asset_balance': fields.float(u"资产总值", size=32, required=True),

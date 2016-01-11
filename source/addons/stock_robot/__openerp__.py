@@ -35,5 +35,6 @@
         'data/data_task.xml',
         'menu/menu.xml',
     ],
+    'css': ['static/src/css/*.css'],
     'application': True,
 }

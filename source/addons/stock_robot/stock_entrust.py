@@ -15,6 +15,7 @@ class StockEntrust(osv.osv):
     """
 
     _name = "stock.entrust"
+    _rec_name = 'entrust_no'
     _order = "id desc"
 
     _columns = {

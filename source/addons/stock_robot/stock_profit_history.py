@@ -33,7 +33,9 @@ class StockProfitHistory(osv.osv):
             else:
                 trend = '-'
             # 盈亏率
-            sum_balance_rate = history_obj.sum_balance / history_obj.principal
+            sum_balance_rate = 0
+            if history_obj.principal != 0:
+                history_obj.sum_balance / history_obj.principal
             sum_balance_rate_str = str("%.2f"%(sum_balance_rate * 100)) + "%"
             # 浮动盈亏率
             unstable_profits_rate = 0
@@ -56,6 +58,7 @@ class StockProfitHistory(osv.osv):
         return result
 
     _name = "stock.profit.history"
+    _rec_name = 'date'
     _order = "date desc"
 
     _columns = {

@@ -28,6 +28,7 @@ class StockPosition(osv.osv):
         return result
 
     _name = "stock.position"
+    _rec_name = 'stock_code'
 
     _columns = {
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),

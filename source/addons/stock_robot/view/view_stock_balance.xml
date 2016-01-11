@@ -15,7 +15,8 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <field name="asset_balance" string="资产总值"/>
+                                <label string="资产总值"/>
+                                <field name="asset_balance" class="oe_inline" string="资产总值"/>
                             </h1>
                             <br></br>
                         </div>
