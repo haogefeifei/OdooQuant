@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields, osv
-
+from quant_trader import *
 
 class StockBalance(osv.osv):
     """
@@ -34,7 +34,7 @@ class StockBalance(osv.osv):
         res = balance_cr.browse(cr, uid, ids, context=context)
         return res
 
-    def update(self, cr, uid, context=None):
+    def update_balance(self, cr, uid, context=None):
         """
         更新资产状况
         :param cr:
@@ -42,4 +42,29 @@ class StockBalance(osv.osv):
         :param context:
         :return:
         """
-        # todo 待实现
+        trader = Trader().trader
+        balance_list = trader.balance
+        balance_cr = self.pool.get("stock.balance")
+        # out(balance_list) # 打印
+        for balance in balance_list:
+            ids = balance_cr.search(cr, uid, [('money_type', '=', balance['money_type'])], context=context)
+            if len(ids) < 1:
+                balance_cr.create(cr, uid, {
+                    'asset_balance': float(balance['asset_balance']),
+                    'current_balance': float(balance['current_balance']),
+                    'enable_balance': float(balance['enable_balance']),
+                    'market_value': float(balance['market_value']),
+                    'money_type': balance['money_type'],
+                    'pre_interest': float(balance['pre_interest'])
+                }, context=context)
+                cr.commit()
+            else:
+                # write_ids = balance_cr.search(cr, uid, [('money_type', '=', balance['money_type'])])
+                balance_cr.write(cr, uid, ids, {
+                    'asset_balance': float(balance['asset_balance']),
+                    'current_balance': float(balance['current_balance']),
+                    'enable_balance': float(balance['enable_balance']),
+                    'market_value': float(balance['market_value']),
+                    'pre_interest': float(balance['pre_interest'])
+                }, context=context)
+                cr.commit()

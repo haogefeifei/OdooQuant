@@ -43,26 +43,79 @@ class StockPosition(osv.osv):
         'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势")
     }
 
-    def update(self, cr, uid, ids, context=None):
+    def update_position(self, cr, uid, context=None):
         """
         更新持仓股票
         """
-        # todo 待实现
-        pass
+        trader = Trader().trader
+        position_cr = self.pool.get("stock.position")
+        position_list = trader.position
+        for position in position_list:
+            ids = position_cr.search(cr, uid, [('stock_id.code', '=', position['stock_code'])], context=context)
+            if len(ids) < 1:
+                stock = self.pool.get('stock.basics').get_stock_by_code(cr, uid, position['stock_code'])
+                position_cr.create(cr, uid, {
+                    'stock_id': stock.id,
+                    'stock_code': stock.code,
+                    'position_str': position['position_str'],
+                    'market_value': float(position['market_value']),
+                    'last_price': float(position['last_price']),
+                    'keep_cost_price': float(position['keep_cost_price']),
+                    'income_balance': float(position['income_balance']),
+                    'cost_price': float(position['cost_price']),
+                    'enable_amount': int(position['enable_amount']),
+                    'current_amount': int(position['current_amount']),
+                }, context=context)
+                cr.commit()
+            else:
+                position_cr.write(cr, uid, ids, {
+                    'position_str': position['position_str'],
+                    'market_value': float(position['market_value']),
+                    'last_price': float(position['last_price']),
+                    'keep_cost_price': float(position['keep_cost_price']),
+                    'income_balance': float(position['income_balance']),
+                    'cost_price': float(position['cost_price']),
+                    'enable_amount': int(position['enable_amount']),
+                    'current_amount': int(position['current_amount']),
+                }, context=context)
+
+        # 删除已经不存在的持仓
+        ids = position_cr.search(cr, uid, [], context=context)
+        pos_obj_list = position_cr.read(cr, uid, ids, ['stock_code', 'id'], context)
+        for pos_list in pos_obj_list:
+            b = True
+            for position in position_list:
+                if position['stock_code'] == pos_list['stock_code']:
+                    b = False
+            if b:
+                self.pool.get('stock.position').unlink(cr, uid, pos_list['id'], context=context)
+
+
 
     def run_update(self, cr, uid, context=None):
         """
-        更新持仓/资金/委托单信息
+        更新持仓/资金/委托单信息 定时任务
         """
-        _logger.debug(u"run -----> 更新持仓/资金/委托单信息!")
+        # 更新资金信息 --------------------
+        self.pool.get("stock.balance").update_balance(cr, uid, context)
 
-        trader = Trader().trader
-        out(trader.balance)
-        out(trader.position)
+        # 更新持仓信息 --------------------
+        self.pool.get("stock.position").update_position(cr, uid, context)
 
-        # todo 更新资金信息
+        # 更新委托单信息 ------------------
+        self.pool.get("stock.entrust").update_entrust(cr, uid, context)
 
-        # todo 更新持仓信息
 
-        # todo 更新委托单信息
+
+
+
+
+
+
+
+
+
+
+
+
 
