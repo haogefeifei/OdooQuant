@@ -2,7 +2,6 @@
 
 from openerp.osv import fields, osv
 import logging
-import time
 from datetime import datetime
 import pytz
 

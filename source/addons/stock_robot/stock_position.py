@@ -44,6 +44,13 @@ class StockPosition(osv.osv):
         'current_amount': fields.integer(u"当前数量", size=64, required=True),
         'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势"),
         'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
+        'state': fields.selection((
+            ('active', u'有效'),
+            ('lose', u'失效')), u'状态'),
+    }
+
+    _defaults = {
+        'state': 'active'
     }
 
     def update_position(self, cr, uid, context=None):
@@ -54,7 +61,10 @@ class StockPosition(osv.osv):
         position_cr = self.pool.get("stock.position")
         position_list = trader.position
         for position in position_list:
-            ids = position_cr.search(cr, uid, [('stock_id.code', '=', position['stock_code'])], context=context)
+            ids = position_cr.search(cr, uid, [
+                ('stock_id.code', '=', position['stock_code']),
+                ('state', '=', 'active')
+            ], context=context)
             if len(ids) < 1:
                 stock = self.pool.get('stock.basics').get_stock_by_code(cr, uid, position['stock_code'])
                 if stock is not None:
@@ -83,8 +93,8 @@ class StockPosition(osv.osv):
                     'current_amount': int(position['current_amount']),
                 }, context=context)
 
-        # 删除已经不存在的持仓
-        ids = position_cr.search(cr, uid, [], context=context)
+        # 已经不存在的持仓改为失效
+        ids = position_cr.search(cr, uid, [('state', '=', 'active')], context=context)
         pos_obj_list = position_cr.read(cr, uid, ids, ['stock_code', 'id'], context)
         for pos_list in pos_obj_list:
             b = True
@@ -92,7 +102,7 @@ class StockPosition(osv.osv):
                 if position['stock_code'] == pos_list['stock_code']:
                     b = False
             if b:
-                self.pool.get('stock.position').unlink(cr, uid, pos_list['id'], context=context)
+                self.pool.get('stock.position').write(cr, uid, pos_list['id'], {'state': 'lose'}, context=context)
 
     def run_update(self, cr, uid, context=None):
         """

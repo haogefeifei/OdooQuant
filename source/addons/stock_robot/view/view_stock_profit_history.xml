@@ -62,7 +62,7 @@
         
                 
         <record model="ir.ui.view" id="view_stock_profit_history_search">
-            <field name="name">sstock.profit.history.view</field>
+            <field name="name">stock.profit.history.view</field>
             <field name="model">stock.profit.history</field>
             <field name="arch" type="xml">
                 <search string="Entrust Session">

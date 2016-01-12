@@ -32,7 +32,8 @@
                         <notebook>
                             <page string="持仓股票" colpsan="4">
                                 <field name='position_ids' string="持仓股票">
-                                    <tree string="stock.entrust.report_time" colors="red:trend=='↑';green:trend=='↓'"
+                                    <tree string="stock.entrust.report_time"
+                                          colors="grey:state=='lose';red:trend=='↑';green:trend=='↓'"
                                           editable="bottom">
                                         <field name="stock_id" string="证券名称"/>
                                         <field name="market_value" string="证券市值"/>
@@ -43,6 +44,7 @@
                                         <field name="enable_amount" string="可卖数量"/>
                                         <field name="current_amount" string="当前数量"/>
                                         <field name="trend" string="盈亏"/>
+                                        <field name="state" string="状态"/>
                                     </tree>
                                 </field>
                                 <group class="oe_subtotal_footer oe_right" colspan="2" name="weight_total">
