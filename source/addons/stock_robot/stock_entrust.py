@@ -16,7 +16,7 @@ class StockEntrust(osv.osv):
 
     _name = "stock.entrust"
     _rec_name = 'entrust_no'
-    _order = "id desc"
+    _order = "report_time desc"
 
     _columns = {
         'business_amount': fields.integer(u"成交数量", size=32, required=True),

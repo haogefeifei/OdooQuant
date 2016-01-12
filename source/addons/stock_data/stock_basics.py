@@ -82,8 +82,10 @@ class StockBasics(osv.osv):
     def get_stock_by_code(self, cr, uid, code, context=None):
         basics_obj = self.pool.get('stock.basics')
         ids = basics_obj.search(cr, uid, [('code', '=', code)])
-        stock = basics_obj.browse(cr, uid, ids[0], context=context)
-        return stock
+        if len(ids) > 0:
+            stock = basics_obj.browse(cr, uid, ids[0], context=context)
+            return stock
+        return None
 
     def run_get_stock_base_data(self, cr, uid, mail=[], context=None):
         """更新数据定时任务

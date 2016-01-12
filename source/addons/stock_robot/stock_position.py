@@ -6,6 +6,7 @@ import logging
 
 _logger = logging.getLogger(__name__)
 
+
 class StockPosition(osv.osv):
     """
     持仓股票
@@ -56,19 +57,20 @@ class StockPosition(osv.osv):
             ids = position_cr.search(cr, uid, [('stock_id.code', '=', position['stock_code'])], context=context)
             if len(ids) < 1:
                 stock = self.pool.get('stock.basics').get_stock_by_code(cr, uid, position['stock_code'])
-                position_cr.create(cr, uid, {
-                    'stock_id': stock.id,
-                    'stock_code': stock.code,
-                    'position_str': position['position_str'],
-                    'market_value': float(position['market_value']),
-                    'last_price': float(position['last_price']),
-                    'keep_cost_price': float(position['keep_cost_price']),
-                    'income_balance': float(position['income_balance']),
-                    'cost_price': float(position['cost_price']),
-                    'enable_amount': int(position['enable_amount']),
-                    'current_amount': int(position['current_amount']),
-                }, context=context)
-                cr.commit()
+                if stock is not None:
+                    position_cr.create(cr, uid, {
+                        'stock_id': stock.id,
+                        'stock_code': stock.code,
+                        'position_str': position['position_str'],
+                        'market_value': float(position['market_value']),
+                        'last_price': float(position['last_price']),
+                        'keep_cost_price': float(position['keep_cost_price']),
+                        'income_balance': float(position['income_balance']),
+                        'cost_price': float(position['cost_price']),
+                        'enable_amount': int(position['enable_amount']),
+                        'current_amount': int(position['current_amount']),
+                    }, context=context)
+                    cr.commit()
             else:
                 position_cr.write(cr, uid, ids, {
                     'position_str': position['position_str'],
@@ -92,8 +94,6 @@ class StockPosition(osv.osv):
             if b:
                 self.pool.get('stock.position').unlink(cr, uid, pos_list['id'], context=context)
 
-
-
     def run_update(self, cr, uid, context=None):
         """
         更新持仓/资金/委托单信息 定时任务
@@ -106,18 +106,3 @@ class StockPosition(osv.osv):
 
         # 更新委托单信息 ------------------
         self.pool.get("stock.entrust").update_entrust(cr, uid, context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
