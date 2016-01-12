@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields, osv
+import logging
+import time
+from datetime import datetime
+import pytz
 
+_logger = logging.getLogger(__name__)
 
 class StockProfitHistory(osv.osv):
     """
@@ -88,3 +93,53 @@ class StockProfitHistory(osv.osv):
         'date': fields.date.context_today,
         'is_section': False
     }
+
+
+    def checkTodayStockOpened(self):
+        """
+        检查今天是否开盘
+        :return: 开盘 True
+        """
+        pass
+
+    def get_now_time(self):
+        """获取当前时间"""
+        tz = pytz.timezone('Asia/Shanghai')
+        return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+
+    def run_update_profit_history(self, cr, uid, context=None):
+        """
+        更新盈亏历史定时任务
+        :param cr:
+        :param uid:
+        :param context:
+        :return:
+        """
+        _logger.debug(u"--> 当前时间" + self.get_now_time())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
