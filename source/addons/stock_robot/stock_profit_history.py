@@ -114,13 +114,14 @@ class StockProfitHistory(osv.osv):
         """
 
         today = self.get_today()
-        _logger.debug(u"--> 当前日期" + str(today))
-        CNY_balance = self.pool.get("stock.balance").get_CNY_balance(cr, uid, context)
+        # _logger.debug(u"------> 当前日期" + str(today))
         stock_position_cr = self.pool.get("stock.position")
         history_cr = self.pool.get("stock.profit.history")
+
+        # 计算今天总盈亏
+        CNY_balance = self.pool.get("stock.balance").get_CNY_balance(cr, uid, context)
         position_ids = stock_position_cr.search(cr, uid, [], context=context)
         position_list = stock_position_cr.browse(cr, uid, position_ids, context=context)
-
         day_profits = 0  # 日盈亏额
         unstable_profits = 0  # 浮动盈亏
         sum_balance = 0  # 盈亏
@@ -161,3 +162,29 @@ class StockProfitHistory(osv.osv):
                 'principal': principal
             }, context=context)
             cr.commit()
+
+        # 计算各仓段盈亏
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

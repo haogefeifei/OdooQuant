@@ -25,7 +25,9 @@
                             </h1>
                         </div>
                         <group>
-                            <field name="net_worth" string="当前净值"/>
+                            <field name="asset_balance" string="资产总值"/>
+                            <field name="net_worth" string="证券市值"/>
+                            <field name="enable_balance" string="可用金额"/>
                             <field name="init_worth" string="初始净值"/>
                             <field name="algorithm_id" string="策略"/>
                         </group>
@@ -95,7 +97,9 @@
             <field name="arch" type="xml">
                 <tree string="qt.balance.section">
                     <field name="name" string="仓段名称"/>
-                    <field name="net_worth" string="当前净值"/>
+                    <field name="asset_balance" string="资产总值"/>
+                    <field name="net_worth" string="证券市值"/>
+                    <field name="enable_balance" string="可用金额"/>
                     <field name="init_worth" string="初始净值"/>
                     <field name="profits_rate_str" string="盈利率"/>
                     <field name="algorithm_id" string="策略"/>
