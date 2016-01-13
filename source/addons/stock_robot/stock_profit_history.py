@@ -116,6 +116,7 @@ class StockProfitHistory(osv.osv):
         today = self.get_today()
         # _logger.debug(u"------> 当前日期" + str(today))
         stock_position_cr = self.pool.get("stock.position")
+        section_cr = self.pool.get("qt.balance.section")
         history_cr = self.pool.get("stock.profit.history")
 
         # 计算今天总盈亏
@@ -163,28 +164,54 @@ class StockProfitHistory(osv.osv):
             }, context=context)
             cr.commit()
 
-        # 计算各仓段盈亏
+        # 计算各仓段日盈亏
+        section_ids = section_cr.search(cr, uid, [], context=context)
+        if section_ids:
+            for section_id in section_ids:
+                section = section_cr.browse(cr, uid, section_id, context=context)
+                position_ids = stock_position_cr.search(cr, uid, [('section_id', '=', section_id)], context=context)
+                position_list = stock_position_cr.browse(cr, uid, position_ids, context=context)
+                day_profits = 0  # 日盈亏额
+                unstable_profits = 0  # 浮动盈亏
+                sum_balance = 0  # 盈亏
+                cash = section.enable_balance  # 现金
+                market_value = 0  # 市值
+                principal = section.init_worth  # 本金
 
+                for pos in position_list:
+                    day_profits += pos.day_profits
+                    market_value += pos.market_value
+                    unstable_profits += pos.income_balance
 
+                # 计算总盈亏
+                history_ids = history_cr.search(cr, uid, [('section_id', '=', section_id), ('is_section', '=', True)],
+                                                context=context)
+                history_list = history_cr.read(cr, uid, history_ids, ['day_profits'], context=context)
+                for his in history_list:
+                    sum_balance += his['day_profits']
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                ids = history_cr.search(cr, uid, [('date', '=', today), ('section_id', '=', section_id),
+                                                  ('is_section', '=', True)], context=context)
+                if len(ids) < 1:
+                    history_cr.create(cr, uid, {
+                        'date': today,
+                        'day_profits': day_profits,
+                        'unstable_profits': unstable_profits,
+                        'sum_balance': sum_balance,
+                        'cash': cash,
+                        'market_value': market_value,
+                        'principal': principal,
+                        'section_id': section_id,
+                        'is_section': True
+                    }, context=context)
+                    cr.commit()
+                else:
+                    history_cr.write(cr, uid, ids, {
+                        'day_profits': day_profits,
+                        'unstable_profits': unstable_profits,
+                        'sum_balance': sum_balance,
+                        'cash': cash,
+                        'market_value': market_value,
+                        'principal': principal
+                    }, context=context)
+                    cr.commit()
