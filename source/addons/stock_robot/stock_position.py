@@ -36,13 +36,42 @@ class StockPosition(osv.osv):
         日盈亏=（昨日持股数−今卖出数）∗（当前股价−昨收盘价）+今买入数∗（当前股价−今买入价）+今卖出数∗（卖出价−昨收盘价）
         """
         result = {}
-        position_cr = self.pool.get("stock.position")
+        position_cr = self.pool.get("stock.position")  # 持仓对象
+        entrust_cr = self.pool.get("stock.entrust")  # 委托单对象
         pos_list = position_cr.browse(cr, uid, ids, context=context)
 
         for pos in pos_list:
-            # TODO
+            # 查询出该股票今天的已成委托单
+            today = datetime.now(pytz.timezone('UTC')).strftime('%Y-%m-%d')
+            today_begin = today + u' 00:00:00'
+            today_end = today + u' 23:59:59'
+            entrust_ids = entrust_cr.search(cr, uid, [('state', '=', 'done'), ('report_time', '>', today_begin),
+                                                      ('report_time', '<', today_end)], context=context)
+            buy_amount = 0  # 今买入数
+            buy_price = 0  # 今买入价
+            buy_sum = 0
+            sell_amount = 0  # 今卖出数
+            sell_price = 0  # 今卖出价
+            sell_sum = 0
+
+            if entrust_ids:
+                for id in entrust_ids:
+                    entrust = entrust_cr.browse(cr, uid, id, context=context)
+                    if entrust.entrust_bs == 'buy':
+                        buy_amount += entrust.business_amount
+                        buy_sum += entrust.business_amount * entrust.business_price
+                    else:
+                        sell_amount += entrust.business_amount
+                        sell_sum += entrust.business_amount * entrust.business_price
+                buy_price = buy_sum / buy_amount
+                sell_price = sell_sum / sell_amount
+            # sell_amount_yes = pos.current_amount - buy_amount + sell_amount  # 昨日持股数
+
+            # 昨收盘价
             yesterday_price = self.pool.get('stock.basics').get_yesterday_price(pos.stock_code)
-            result[pos.id] = pos.current_amount * (pos.last_price - yesterday_price)
+            # result[pos.id] = pos.current_amount * (pos.last_price - yesterday_price)
+            result[pos.id] = (pos.current_amount - buy_amount) * (pos.last_price - yesterday_price) + buy_amount * (
+            pos.last_price - buy_price) + sell_amount * (sell_price - yesterday_price)
         return result
 
     def get_now_time(self):
