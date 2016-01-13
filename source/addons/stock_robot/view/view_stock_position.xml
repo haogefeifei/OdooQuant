@@ -59,6 +59,18 @@
             </field>
         </record>
 
+        <!-- Graph report -->
+        <record id="view_stock_position_graph" model="ir.ui.view">
+            <field name="name">stock.position.graph</field>
+            <field name="model">stock.position</field>
+            <field name="arch" type="xml">
+                <graph string="持股结构" type="pie">
+                    <field name="stock_id"/>
+                    <field name="market_value" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_stock_position_search">
             <field name="name">stock.position.view</field>
             <field name="model">stock.position</field>
@@ -74,7 +86,7 @@
             <field name="name">持仓列表</field>
             <field name="res_model">stock.position</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,graph,form</field>
             <field name="search_view_id" ref="view_stock_position_search"/>
             <field name="context">{'search_default_is_active_filter':True}</field>
         </record>
