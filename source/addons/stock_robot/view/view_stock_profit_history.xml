@@ -15,7 +15,7 @@
                     <sheet>
                         <div class="oe_title">
                             <h1>
-                                <field name="date" string="日期" size="40"/>
+                                <field name="date" string="日期" widget="date"/>
                             </h1>
                             <br></br>
                         </div>
@@ -59,8 +59,18 @@
                 </tree>
             </field>
         </record>
-        
-                
+
+        <record id="view_stock_profit_history_graph" model="ir.ui.view">
+            <field name="name">stock.profit.history.graph</field>
+            <field name="model">stock.profit.history</field>
+            <field name="arch" type="xml">
+                <graph string="Project Tasks" type="line">
+                    <field name="date" interval="day"/>
+                    <field name="day_profits" operator="+"/>
+                </graph>
+            </field>
+        </record>
+
         <record model="ir.ui.view" id="view_stock_profit_history_search">
             <field name="name">stock.profit.history.view</field>
             <field name="model">stock.profit.history</field>
@@ -76,8 +86,8 @@
             <field name="name">盈亏历史</field>
             <field name="res_model">stock.profit.history</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-             <field name="search_view_id" ref="view_stock_profit_history_search"/>
+            <field name="view_mode">tree,graph,form</field>
+            <field name="search_view_id" ref="view_stock_profit_history_search"/>
             <field name="context">{'search_default_is_section_filter':True}</field>
         </record>
 

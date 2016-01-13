@@ -84,7 +84,7 @@ class StockProfitHistory(osv.osv):
         'cash': fields.float(u"现金", size=32, required=True),
         'principal': fields.float(u"本金", size=32, required=True),
         'trend': fields.function(_get_line_profit_rate, type='char', multi="profit_line", method=True, help=u"涨跌趋势"),
-        'is_section': fields.boolean(u"是否是仓段盈亏记录", required=True),
+        'is_section': fields.boolean(u"是否是仓段盈亏记录"),
         'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
     }
 
