@@ -18,6 +18,11 @@ class StockBalance(osv.osv):
         'market_value': fields.float(u"证券市值", size=32, required=True),
         'money_type': fields.char(u"币种", size=10, required=True),
         'pre_interest': fields.float(u"预计利息", size=32, required=True),
+        'principal': fields.float(u"本金", size=32, required=True),
+    }
+
+    _defaults = {
+        'principal': 1000
     }
 
     def get_CNY_balance(self, cr, uid, context=None):

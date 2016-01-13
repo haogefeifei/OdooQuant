@@ -7,6 +7,7 @@ import pytz
 
 _logger = logging.getLogger(__name__)
 
+
 class StockProfitHistory(osv.osv):
     """
     盈亏历史
@@ -54,8 +55,6 @@ class StockProfitHistory(osv.osv):
                     result[id][field] = total_account
                 elif field == 'sum_balance_rate_str':
                     result[id][field] = sum_balance_rate_str
-                # elif field == 'total_account':
-                #     result[id][field] = total_account
                 elif field == 'trend':
                     result[id][field] = trend
 
@@ -93,7 +92,6 @@ class StockProfitHistory(osv.osv):
         'is_section': False
     }
 
-
     def checkTodayStockOpened(self):
         """
         检查今天是否开盘
@@ -101,10 +99,10 @@ class StockProfitHistory(osv.osv):
         """
         pass
 
-    def get_now_time(self):
-        """获取当前时间"""
-        tz = pytz.timezone('Asia/Shanghai')
-        return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+    def get_today(self):
+        """获取当前日期"""
+        tz = pytz.timezone('UTC')
+        return datetime.now(tz).date()
 
     def run_update_profit_history(self, cr, uid, context=None):
         """
@@ -114,31 +112,52 @@ class StockProfitHistory(osv.osv):
         :param context:
         :return:
         """
-        _logger.debug(u"--> 当前时间" + self.get_now_time())
 
+        today = self.get_today()
+        _logger.debug(u"--> 当前日期" + str(today))
+        CNY_balance = self.pool.get("stock.balance").get_CNY_balance(cr, uid, context)
+        stock_position_cr = self.pool.get("stock.position")
+        history_cr = self.pool.get("stock.profit.history")
+        position_ids = stock_position_cr.search(cr, uid, [], context=context)
+        position_list = stock_position_cr.browse(cr, uid, position_ids, context=context)
 
+        day_profits = 0  # 日盈亏额
+        unstable_profits = 0  # 浮动盈亏
+        sum_balance = 0  # 盈亏
+        cash = CNY_balance.enable_balance  # 现金
+        market_value = 0  # 市值
+        principal = CNY_balance.principal  # 本金
 
+        for pos in position_list:
+            day_profits += pos.day_profits
+            market_value += pos.market_value
+            unstable_profits += pos.income_balance
 
+        # 计算总盈亏
+        history_ids = history_cr.search(cr, uid, [], context=context)
+        history_list = history_cr.read(cr, uid, history_ids, ['day_profits'], context=context)
+        for his in history_list:
+            sum_balance += his['day_profits']
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        ids = history_cr.search(cr, uid, [('date', '=', today)], context=context)
+        if len(ids) < 1:
+            history_cr.create(cr, uid, {
+                'date': today,
+                'day_profits': day_profits,
+                'unstable_profits': unstable_profits,
+                'sum_balance': sum_balance,
+                'cash': cash,
+                'market_value': market_value,
+                'principal': principal
+            }, context=context)
+            cr.commit()
+        else:
+            history_cr.write(cr, uid, ids, {
+                'day_profits': day_profits,
+                'unstable_profits': unstable_profits,
+                'sum_balance': sum_balance,
+                'cash': cash,
+                'market_value': market_value,
+                'principal': principal
+            }, context=context)
+            cr.commit()

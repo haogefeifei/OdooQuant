@@ -24,11 +24,13 @@
                             <field name="market_value" string="证券市值"/>
                             <field name="last_price" string="最新价"/>
                             <field name="keep_cost_price" string="保本价"/>
+                            <field name="day_profits" string="日盈亏额"/>
                             <field name="income_balance" string="摊薄浮动盈亏"/>
                             <field name="cost_price" string="摊薄成本价"/>
                             <field name="enable_amount" string="可卖数量"/>
                             <field name="current_amount" string="当前数量"/>
                             <field name="section_id" string="所属仓段"/>
+                            <field name="lose_time" string="失效时间" attrs="{'invisible': [('state','=','active')]}" />
                             <field name="state" string="状态"/>
                         </group>
 
@@ -48,6 +50,7 @@
                     <field name="market_value" string="证券市值"/>
                     <field name="last_price" string="最新价"/>
                     <field name="keep_cost_price" string="保本价"/>
+                    <field name="day_profits" string="日盈亏额"/>
                     <field name="income_balance" string="摊薄浮动盈亏"/>
                     <field name="cost_price" string="摊薄成本价"/>
                     <field name="enable_amount" string="可卖数量"/>
@@ -78,6 +81,8 @@
                 <search string="Entrust Session">
                     <filter name="is_active_filter" string="有效"
                             domain="[('state', '=', 'active')]"/>
+                    <filter name="today_lose_time_filter" string="今日清仓"
+                            domain="[('lose_time', '>=', time.strftime('%%Y-%%m-%%d 00:00:00'))]"/>
                 </search>
             </field>
         </record>

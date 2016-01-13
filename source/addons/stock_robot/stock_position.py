@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields, osv
-from quant_trader import *
 import logging
+from datetime import datetime
+from quant_trader import *
+import pytz
 
 _logger = logging.getLogger(__name__)
 
@@ -28,12 +30,33 @@ class StockPosition(osv.osv):
                     result[id][field] = self.pool.get('stock.basics').get_stock_code(cr, uid, position_obj.stock_id.id)
         return result
 
+    def _get_day_profits(self, cr, uid, ids, field_names, arg, context=None):
+        """
+        计算日盈亏额
+        日盈亏=（昨日持股数−今卖出数）∗（当前股价−昨收盘价）+今买入数∗（当前股价−今买入价）+今卖出数∗（卖出价−昨收盘价）
+        """
+        result = {}
+        position_cr = self.pool.get("stock.position")
+        pos_list = position_cr.browse(cr, uid, ids, context=context)
+
+        for pos in pos_list:
+            # TODO
+            yesterday_price = self.pool.get('stock.basics').get_yesterday_price(pos.stock_code)
+            result[pos.id] = pos.current_amount * (pos.last_price - yesterday_price)
+        return result
+
+    def get_now_time(self):
+        """获取当前时间"""
+        tz = pytz.timezone('UTC')
+        return datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
+
     _name = "stock.position"
     _rec_name = 'stock_code'
 
     _columns = {
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),
         'stock_code': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"证券代码"),
+        'day_profits': fields.function(_get_day_profits, type='float', method=True, help=u"日盈亏额"),
         'position_str': fields.char(u"定位串", size=64),
         'market_value': fields.float(u"证券市值", size=64, required=True),
         'last_price': fields.float(u"最新价", size=64, required=True),
@@ -44,6 +67,7 @@ class StockPosition(osv.osv):
         'current_amount': fields.integer(u"当前数量", size=64, required=True),
         'trend': fields.function(_get_stock_trend, type='char', multi="position_line", method=True, help=u"涨跌趋势"),
         'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
+        'lose_time': fields.datetime(u'失效时间'),
         'state': fields.selection((
             ('active', u'有效'),
             ('lose', u'失效')), u'状态'),
@@ -102,7 +126,9 @@ class StockPosition(osv.osv):
                 if position['stock_code'] == pos_list['stock_code']:
                     b = False
             if b:
-                self.pool.get('stock.position').write(cr, uid, pos_list['id'], {'state': 'lose'}, context=context)
+                self.pool.get('stock.position').write(cr, uid, pos_list['id'],
+                                                      {'state': 'lose', 'lose_time': self.get_now_time()},
+                                                      context=context)
 
     def run_update(self, cr, uid, context=None):
         """

@@ -74,6 +74,18 @@ class StockBasics(osv.osv):
         currentPrice = string.atof(stockInfo[3])
         return float(currentPrice)
 
+    def get_yesterday_price(self, stock_code):
+        """
+        获取股票昨日收盘价格
+        :param stock_code:
+        :return:
+        """
+        code = self._code_to_symbol(stock_code)
+        data = urllib.urlopen("http://hq.sinajs.cn/list=" + code).read().decode('gb2312')
+        stockInfo = data.split(',')
+        currentPrice = string.atof(stockInfo[2])
+        return float(currentPrice)
+
     def get_stock_code(self, cr, uid, id, context=None):
         basics_obj = self.pool.get('stock.basics')
         stock = basics_obj.browse(cr, uid, id, context=context)

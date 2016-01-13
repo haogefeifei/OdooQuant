@@ -24,6 +24,7 @@
                             <field name="current_balance" string="当前余额"/>
                             <field name="enable_balance" string="可用金额"/>
                             <field name="market_value" string="证券市值"/>
+                            <field name="principal" string="本金"/>
                             <field name="money_type" string="币种"/>
                             <field name="pre_interest" string="预计利息"/>
                         </group>
@@ -43,6 +44,7 @@
                     <field name="asset_balance" string="资产总值"/>
                     <field name="current_balance" string="当前余额"/>
                     <field name="enable_balance" string="可用金额"/>
+                    <field name="principal" string="本金"/>
                     <field name="market_value" string="证券市值"/>
                     <field name="pre_interest" string="预计利息"/>
                 </tree>
