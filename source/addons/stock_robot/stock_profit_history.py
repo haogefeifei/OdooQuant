@@ -101,7 +101,7 @@ class StockProfitHistory(osv.osv):
 
     def get_today(self):
         """获取当前日期"""
-        tz = pytz.timezone('UTC')
+        tz = pytz.timezone('Asia/Shanghai')
         return datetime.now(tz).date()
 
     def run_update_profit_history(self, cr, uid, context=None):
