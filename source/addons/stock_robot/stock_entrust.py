@@ -38,10 +38,6 @@ class StockEntrust(osv.osv):
         'is_clear': fields.boolean(u'是否已清算')
     }
 
-    _defaults = {
-        'is_clear': False
-    }
-
     def get_now_time(self, cr, uid, ids, context=None):
         """获取当前时间"""
         tz = pytz.timezone('UTC')
@@ -54,6 +50,7 @@ class StockEntrust(osv.osv):
         return qz + " " + hz
 
     _defaults = {
+        'is_clear': False,
         'entrust_no': '000000',
         'entrust_bs': 'buy',
         'state': 'report',
@@ -82,6 +79,8 @@ class StockEntrust(osv.osv):
         _logger.debug(u"run 委托单 -> create!")
 
         basics_obj = self.pool.get('stock.basics')
+        section_cr = self.pool.get("qt.balance.section")
+        position_cr = self.pool.get("stock.position")
         stock_obj = basics_obj.read(cr, uid, vals['stock_id'], ['name', 'code', 'id'], context)
         vals['stock_name'] = stock_obj['name']
         vals['stock_code'] = stock_obj['code']
@@ -90,17 +89,19 @@ class StockEntrust(osv.osv):
         if vals['pwd'] != '666666':
             raise osv.except_osv(u"错误", u"交易密码错误")
 
+        # todo 检查是否是买入时间
+
+        # 检查委托数量是否正确
+        r = divmod(vals['entrust_amount'], 100)
+        if r[0] < 1 or r[1] != 0:
+            raise osv.except_osv(u"错误", u"委托数量有误")
+
         # 首先要区分是买入还是卖出
         if vals['entrust_bs'] == 'buy':
             # 买入
 
-            # todo 检查是否是买入时间
-
-            # todo 检查委托数量是否正确
-
             # 检查是否足够的资金操作
             CNY_balance = self.pool.get("stock.balance").get_CNY_balance(cr, uid, context)
-
             if CNY_balance is None:
                 raise osv.except_osv(u"错误", u"没有可用的人民币资产")
 
@@ -109,17 +110,50 @@ class StockEntrust(osv.osv):
             if CNY_balance.enable_balance < handle_balance:
                 raise osv.except_osv(u"错误", u"可用资金不足,无法买入")
 
-            # todo 没有问题的话, 调用买入股票接口(还需要处理返回的委托单号)
-            self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']), int(vals['entrust_amount']),
-                           context)
-        else:
-            # todo 卖出
-            pass
+            if vals['section_id']:
+                section = section_cr.browse(cr, uid, vals['section_id'], context=context)
+                if section.enable_balance < handle_balance:
+                    raise osv.except_osv(u"错误", u"仓段可用资金不足,无法买入")
 
-        # todo 更新资金
+            # 调用买入股票接口(返回的委托单号)
+            vals['entrust_no'] = self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
+                                                int(vals['entrust_amount']),
+                                                context)
+            # 如果是仓段委托单 更新可用资金资金
+            if vals['section_id']:
+                section = section_cr.browse(cr, uid, vals['section_id'], context=context)
+                enable_balance = section.enable_balance - vals['entrust_amount'] * float(
+                        vals['entrust_price']) + self.get_poundage(
+                        vals['stock_code'],
+                        vals['entrust_amount'] * float(vals['entrust_price']), vals['entrust_bs'])
+                section_cr.write(cr, uid, vals['section_id'], {
+                    'enable_balance': enable_balance
+                }, context=context)
+                cr.commit()
+
+        else:
+            # 卖出
+            # 检查是否持有该股票
+            ids = position_cr.search(cr, uid, [
+                ('stock_id.id', '=', vals['stock_id']),
+                ('state', '=', 'active')
+            ], context=context)
+            if not ids:
+                raise osv.except_osv(u"错误", u"没有持有该股票,无法卖出")
+            # 检查是否有足够的可卖数量
+            position = position_cr.browse(cr, uid, ids, context=context)
+            if position.enable_amount < vals['entrust_amount']:
+                raise osv.except_osv(u"错误", u"没有足够的可卖数量,无法卖出")
+            vals['entrust_no'] = self.sell_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
+                                                 int(vals['entrust_amount']),
+                                                 context)
 
         vals['pwd'] = "******"  # 处理掉交易密码
-        return super(StockEntrust, self).create(cr, uid, vals, context)
+        id = super(StockEntrust, self).create(cr, uid, vals, context)
+
+        # 更新所有数据
+        position_cr.run_update(cr, uid, context=context)
+        return id
 
     def buy_stock(self, cr, uid, code, price, amount, context=None):
         """
@@ -129,29 +163,11 @@ class StockEntrust(osv.osv):
         :param context:
         :return: 委托单号
         """
-        # todo 待实现
         trader = Trader().trader
-        _logger.debug(u"--> 创建买入委托单:" + code + "  " + str(price) + "  " + str(amount))
+        r = trader.buy(code, price=price, amount=amount)
+        return r['entrust_no']
 
-        # [{'entrust_no': '委托编号',
-        #   'init_date': '发生日期',
-        #   'batch_no': '委托批号',
-        #   'report_no': '申报号',
-        #   'seat_no': '席位编号',
-        #   'entrust_time': '委托时间',
-        #   'entrust_price': '委托价格',
-        #   'entrust_amount': '委托数量',
-        #   'stock_code': '证券代码',
-        #   'entrust_bs': '买卖方向',
-        #   'entrust_type': '委托类别',
-        #   'entrust_status': '委托状态',
-        #   'fund_account': '资金帐号',
-        #   'error_no': '错误号',
-        #   'error_info': '错误原因'}]
-
-        # trader.buy('162411', price=0.55, amount=100)
-
-    def sell_stock(self, cr, uid, context=None):
+    def sell_stock(self, cr, uid, code, price, amount, context=None):
         """
         创建真实卖出委托单
         :param cr:
@@ -159,8 +175,9 @@ class StockEntrust(osv.osv):
         :param context:
         :return:
         """
-        # todo 待实现
-        pass
+        trader = Trader().trader
+        r = trader.sell(code, price=price, amount=amount)
+        return r['batch_no']
 
     def onchange_stock(self, cr, uid, ids, stock_id, context=None):
         values = {'value': {}}
@@ -196,6 +213,7 @@ class StockEntrust(osv.osv):
         trader = Trader().trader
         entrust_list = trader.entrust
         entrust_cr = self.pool.get("stock.entrust")
+        position_cr = self.pool.get("stock.position")
         section_cr = self.pool.get("qt.balance.section")
         # out(entrust_list)  # 打印
         for entrust in entrust_list:
@@ -247,9 +265,9 @@ class StockEntrust(osv.osv):
                 if entrust.state == 'done' and entrust.entrust_bs == 'sale':
                     # 卖出成功 将资金加回 仓段可用资金
                     enable_balance = section.enable_balance + entrust.business_price * entrust.business_amount - self.get_poundage(
-                                entrust.stock_code,
-                                entrust.business_price * entrust.business_amount,
-                                entrust.entrust_bs)
+                            entrust.stock_code,
+                            entrust.business_price * entrust.business_amount,
+                            entrust.entrust_bs)
                 elif entrust.state == 'cancel' and entrust.entrust_bs == 'buy':
                     # 撤单 将资金加回 仓段可用资金
                     enable_balance = section.enable_balance + entrust.entrust_price * entrust.entrust_amount + self.get_poundage(
@@ -258,10 +276,20 @@ class StockEntrust(osv.osv):
                             entrust.entrust_bs)
                 else:
                     enable_balance = section.enable_balance
-                section_cr.write(cr, uid, entrust.section_id.id, {
+
+                if entrust.state != 'report':
+                    # 挂钩持仓股票
+                    position_ids = position_cr.search(cr, uid, [('section_id', '=', False),
+                                                                ('stock_id.id', '=', entrust.stock_id.id)],
+                                                      context=context)
+                    if position_ids:
+                        position_cr.write(cr, uid, position_ids, {
+                            'section_id': entrust.section_id.id}, context=context)
+
+                    section_cr.write(cr, uid, entrust.section_id.id, {
                         'enable_balance': enable_balance
                     }, context=context)
-                entrust_cr.write(cr, uid, entrust.id, {
+                    entrust_cr.write(cr, uid, entrust.id, {
                         'is_clear': True
                     }, context=context)
-                cr.commit()
+                    cr.commit()
