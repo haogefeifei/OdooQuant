@@ -35,6 +35,7 @@
                             <field name="report_time" string="申报时间" options="{'create': false, 'create_edit': false}"
                                    readonly="1"/>
                             <field name="section_id" string="所属仓段"/>
+                            <field name="is_clear" string="是否已清算"/>
                         </group>
                     </sheet>
                 </form>
@@ -57,6 +58,7 @@
                     <field name="business_price" string="成交价格"/>
                     <field name="entrust_no" string="委托编号"/>
                     <field name="section_id" string="所属仓段"/>
+                    <field name="is_clear" string="是否已清算"/>
                     <field name="state" string="委托状态"/>
                 </tree>
             </field>

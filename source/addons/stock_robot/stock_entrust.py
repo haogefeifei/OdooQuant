@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import fields, osv
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from quant_trader import *
 import pytz
 import logging
@@ -35,6 +35,11 @@ class StockEntrust(osv.osv):
         'pwd': fields.char(u"交易密码"),
         'stock_id': fields.many2one('stock.basics', u'股票', required=True),
         'section_id': fields.many2one('qt.balance.section', u'所属仓段'),
+        'is_clear': fields.boolean(u'是否已清算')
+    }
+
+    _defaults = {
+        'is_clear': False
     }
 
     def get_now_time(self, cr, uid, ids, context=None):
@@ -163,6 +168,27 @@ class StockEntrust(osv.osv):
         values['value']['entrust_price'] = stock.current_price
         return values
 
+    def get_poundage(self, stock_code, balance, entrust_bs='buy'):
+        """
+        计算手续费
+        :param stock_code: 股票代码
+        :param balance: 交易金额
+        :param entrust_bs: 买卖方向
+        :return:手续费
+        """
+        commission = 5  # 佣金
+        transfer = 0  # 过户费
+        poundage = 0
+        if balance * 0.00025 > 5:
+            commission = balance * 0.00025
+        if stock_code[:1] in ['5', '6', '9']:
+            transfer = balance * 0.00002
+        if entrust_bs == 'buy':
+            poundage = commission + transfer
+        elif entrust_bs == 'sale':
+            poundage = balance * 0.001 + commission + transfer
+        return round(poundage, 2)
+
     def update_entrust(self, cr, uid, context=None):
         """
         委托单
@@ -170,6 +196,7 @@ class StockEntrust(osv.osv):
         trader = Trader().trader
         entrust_list = trader.entrust
         entrust_cr = self.pool.get("stock.entrust")
+        section_cr = self.pool.get("qt.balance.section")
         # out(entrust_list)  # 打印
         for entrust in entrust_list:
             ids = entrust_cr.search(cr, uid, [('entrust_no', '=', entrust['entrust_no'])], context=context)
@@ -208,4 +235,33 @@ class StockEntrust(osv.osv):
                     'business_price': float(entrust['business_price']),
                     'state': entrust_status,
                 }, context=context)
+                cr.commit()
+
+        _logger.debug(u"----->进行仓段委托清算")
+        ids = entrust_cr.search(cr, uid, [('is_clear', '=', False), ('section_id', '!=', False)], context=context)
+        if ids:
+            _logger.debug(u"----->需要清算的委托单数量:" + str(len(ids)))
+            entrust_clear_list = entrust_cr.browse(cr, uid, ids, context=context)
+            for entrust in entrust_clear_list:
+                section = section_cr.browse(cr, uid, entrust.section_id.id, context=context)
+                if entrust.state == 'done' and entrust.entrust_bs == 'sale':
+                    # 卖出成功 将资金加回 仓段可用资金
+                    enable_balance = section.enable_balance + entrust.business_price * entrust.business_amount - self.get_poundage(
+                                entrust.stock_code,
+                                entrust.business_price * entrust.business_amount,
+                                entrust.entrust_bs)
+                elif entrust.state == 'cancel' and entrust.entrust_bs == 'buy':
+                    # 撤单 将资金加回 仓段可用资金
+                    enable_balance = section.enable_balance + entrust.entrust_price * entrust.entrust_amount + self.get_poundage(
+                            entrust.stock_code,
+                            entrust.entrust_price * entrust.entrust_amount,
+                            entrust.entrust_bs)
+                else:
+                    enable_balance = section.enable_balance
+                section_cr.write(cr, uid, entrust.section_id.id, {
+                        'enable_balance': enable_balance
+                    }, context=context)
+                entrust_cr.write(cr, uid, entrust.id, {
+                        'is_clear': True
+                    }, context=context)
                 cr.commit()
