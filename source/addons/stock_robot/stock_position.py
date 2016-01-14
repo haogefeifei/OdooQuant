@@ -46,7 +46,7 @@ class StockPosition(osv.osv):
             today_begin = today + u' 00:00:00'
             today_end = today + u' 23:59:59'
             entrust_ids = entrust_cr.search(cr, uid, [('state', '=', 'done'), ('report_time', '>', today_begin),
-                                                      ('report_time', '<', today_end)], context=context)
+                                                      ('report_time', '<', today_end), ('stock_id', '=', pos.stock_id.id)], context=context)
             buy_amount = 0  # 今买入数
             buy_price = 0  # 今买入价
             buy_sum = 0
@@ -63,8 +63,10 @@ class StockPosition(osv.osv):
                     else:
                         sell_amount += entrust.business_amount
                         sell_sum += entrust.business_amount * entrust.business_price
-                buy_price = buy_sum / buy_amount
-                sell_price = sell_sum / sell_amount
+                if buy_amount > 0:
+                    buy_price = buy_sum / buy_amount
+                if sell_amount > 0:
+                    sell_price = sell_sum / sell_amount
             # sell_amount_yes = pos.current_amount - buy_amount + sell_amount  # 昨日持股数
 
             # 昨收盘价
