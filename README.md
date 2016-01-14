@@ -7,7 +7,14 @@
 - 历史盈亏统计
 - 策略模块化开发
 
-## License - 许可证
+## 使用
+
+项目是Odoo的模块, 怎么运行可以翻翻下面两个连接.....
+
+- [Odoo开发文档](https://www.odoo.com/documentation/8.0/)
+- [Odoo绿色版](https://github.com/buke/GreenOdoo)
+
+## License
 
 ```
 GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
