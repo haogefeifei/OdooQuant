@@ -42,6 +42,11 @@ class QtBalanceSection(osv.osv):
                     result[id][field] = profits_rate
                 elif field == 'profits_rate_str':
                     result[id][field] = str("%.2f" % (profits_rate * 100)) + "%"
+                elif field == 'color':
+                    if profits_rate > 0:
+                        result[id][field] = 2
+                    else:
+                        result[id][field] = 2
 
         return result
 
@@ -62,6 +67,8 @@ class QtBalanceSection(osv.osv):
         'position_ids': fields.one2many('stock.position', 'section_id', u'仓段持仓股票', help=u'仓段持仓股票',
                                         domain=[('state', '=', 'active')]),
         'history_ids': fields.one2many('stock.profit.history', 'section_id', u'盈亏历史', help=u'盈亏历史'),
+        'color': fields.function(_get_section_data, type='integer', multi="section_line", method=True,
+                                            help=u"颜色"),
     }
 
     _defaults = {

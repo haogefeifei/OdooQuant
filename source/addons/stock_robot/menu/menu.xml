@@ -64,6 +64,12 @@
                 parent="menu_stock_quant_management"
                 sequence="3"
                 action="action_qt_algorithm_stock"/>
+        <menuitem
+                name="运行日志"
+                id="menu_stock_log_list"
+                parent="menu_stock_quant_management"
+                sequence="4"
+                action="action_qt_algorithm_log"/>
     </data>
 
 </openerp>

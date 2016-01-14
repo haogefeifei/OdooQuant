@@ -19,12 +19,29 @@
                         </div>
                         <group>
                             <field name="key" string="key"/>
+                            <field name="mark" string="策略说明"/>
                         </group>
                         <notebook>
+                            <page string="参数" colpsan="4">
+                                <field name='setting_ids' string="股票池">
+                                    <tree string="key" editable="bottom">
+                                        <field name='key' string="参数名称"/>
+                                        <field name='value' string="参数值"/>
+                                    </tree>
+                                </field>
+                            </page>
                             <page string="股票池" colpsan="4">
                                 <field name='stock_ids' string="股票池">
                                     <tree string="stock.name" editable="bottom">
                                         <field name='stock_id' string="股票"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="运行日志" colpsan="4">
+                                <field name='log_ids' string="股票池">
+                                    <tree string="date" editable="bottom">
+                                        <field name='date' string="时间"/>
+                                        <field name='log' string="日志"/>
                                     </tree>
                                 </field>
                             </page>
@@ -42,6 +59,7 @@
                 <tree string="qt.algorithm">
                     <field name="name" string="策略名称"/>
                     <field name="key" string="key"/>
+                    <field name="mark" string="策略说明"/>
                 </tree>
             </field>
         </record>
