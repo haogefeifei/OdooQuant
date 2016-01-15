@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <!--增加新策略-->
+        <record id="xq_qt_algorithm_receipt" model="qt.algorithm">
+            <field name="name">雪球追买策略</field>
+            <field name="key">qt_algorithm_xueqiu</field>
+            <field name="mark">买买买买..</field>
+        </record>
+    </data>
+</openerp>
