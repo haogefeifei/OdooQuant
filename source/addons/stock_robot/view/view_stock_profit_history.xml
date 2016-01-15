@@ -20,6 +20,7 @@
                             <br></br>
                         </div>
                         <group>
+                            <field name="day_profits_rate_str" string="日盈亏率"/>
                             <field name="day_profits" string="日盈亏额"/>
                             <field name="unstable_profits" string="浮动盈亏"/>
                             <field name="unstable_profits_rate" string="浮动盈亏率"/>
@@ -45,6 +46,7 @@
             <field name="arch" type="xml">
                 <tree string="stock.profit.history" colors="red:trend=='↑';green:trend=='↓'">
                     <field name="date" string="日期"/>
+                    <field name="day_profits_rate_str" string="日盈亏率"/>
                     <field name="day_profits" string="日盈亏额"/>
                     <field name="unstable_profits" string="浮动盈亏"/>
                     <field name="unstable_profits_rate" string="浮动盈亏率"/>

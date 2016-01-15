@@ -44,6 +44,9 @@ class StockProfitHistory(osv.osv):
             sum_balance_rate_str = str("%.2f" % (sum_balance_rate * 100)) + "%"
             # 浮动盈亏率
             unstable_profits_rate = 0
+            day_profits_rate = 0
+            if total_account+ history_obj.day_profits != 0:
+                day_profits_rate = history_obj.day_profits / (total_account + history_obj.day_profits)
 
             for field in field_names:
                 result[id][field] = 0
@@ -57,7 +60,10 @@ class StockProfitHistory(osv.osv):
                     result[id][field] = sum_balance_rate_str
                 elif field == 'trend':
                     result[id][field] = trend
-
+                elif field == 'day_profits_rate':
+                    result[id][field] = day_profits_rate
+                elif field == 'day_profits_rate_str':
+                    result[id][field] = str("%.2f" % (day_profits_rate * 100)) + "%"
         return result
 
     _name = "stock.profit.history"
@@ -67,6 +73,10 @@ class StockProfitHistory(osv.osv):
     _columns = {
         'date': fields.date(u'日期', required=True),
         'day_profits': fields.float(u"日盈亏额", size=32, required=True),
+        'day_profits_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True,
+                                                 string=u"日盈亏率"),
+        'day_profits_rate_str': fields.function(_get_line_profit_rate, type='char', multi="profit_line",
+                                                     method=True, string=u"日盈亏率"),
         'unstable_profits': fields.float(u"浮动盈亏", size=32, required=True),
         'unstable_profits_rate': fields.function(_get_line_profit_rate, type='float', multi="profit_line", method=True,
                                                  string=u"浮动盈亏率"),
