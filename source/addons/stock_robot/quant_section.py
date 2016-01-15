@@ -30,7 +30,9 @@ class QtBalanceSection(osv.osv):
 
             section = self.browse(cr, uid, id, context=context)
             asset_balance = section.enable_balance + net_worth  # 资产总值
-            profits_rate = asset_balance / section.init_worth - 1  # 盈利率
+            profits_rate = 0  # 盈利率
+            if section.init_worth != 0:
+                profits_rate = asset_balance / section.init_worth - 1
 
             for field in field_names:
                 result[id][field] = 0

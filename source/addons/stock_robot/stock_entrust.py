@@ -24,7 +24,7 @@ class StockEntrust(osv.osv):
         'entrust_amount': fields.integer(u"委托数量", size=32, required=True),
         'entrust_bs': fields.selection((('buy', u'买入'), ('sale', u'卖出')), u'买卖方向'),
         'entrust_no': fields.integer(u"委托编号", required=True),
-        'entrust_price': fields.char(u"委托价格", required=True),
+        'entrust_price': fields.float(u"委托价格", required=True),
         'state': fields.selection((
             ('done', u'已成'),
             ('cancel', u'废单'),
@@ -203,7 +203,7 @@ class StockEntrust(osv.osv):
         if entrust_bs == 'buy':
             poundage = commission + transfer
         elif entrust_bs == 'sale':
-            poundage = balance * 0.001 + commission + transfer
+            poundage = balance * 0.001 + commission + transfer + 0.5
         return round(poundage, 2)
 
     def update_entrust(self, cr, uid, context=None):
@@ -273,7 +273,7 @@ class StockEntrust(osv.osv):
                     enable_balance = section.enable_balance + entrust.entrust_price * entrust.entrust_amount + self.get_poundage(
                             entrust.stock_code,
                             entrust.entrust_price * entrust.entrust_amount,
-                            entrust.entrust_bs)
+                            str(entrust.entrust_bs))
                 else:
                     enable_balance = section.enable_balance
 
