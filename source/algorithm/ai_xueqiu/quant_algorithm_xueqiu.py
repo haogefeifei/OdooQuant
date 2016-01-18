@@ -16,6 +16,13 @@ class QtAlgorithmXueQiu(osv.osv):
     _name = "qt.algorithm.xueqiu"
     _qt_key = "qt_algorithm_xueqiu"
 
+    def before_trading(self, cr, uid, mail=[], context=None):
+        """
+        每天交易开始前被调用
+        """
+        # todo
+        pass
+
 
     def handle_data(self, cr, uid, mail=[], context=None):
         running = True
