@@ -123,7 +123,7 @@ class StockEntrust(osv.osv):
             if vals['section_id']:
                 section = section_cr.browse(cr, uid, vals['section_id'], context=context)
                 enable_balance = section.enable_balance - vals['entrust_amount'] * float(
-                        vals['entrust_price']) + self.get_poundage(
+                        vals['entrust_price']) - self.get_poundage(
                         vals['stock_code'],
                         vals['entrust_amount'] * float(vals['entrust_price']), vals['entrust_bs'])
                 section_cr.write(cr, uid, vals['section_id'], {
@@ -196,14 +196,16 @@ class StockEntrust(osv.osv):
         commission = 5  # 佣金
         transfer = 0  # 过户费
         poundage = 0
+        other = 0.5 # 其他手续费
+
         if balance * 0.00025 > 5:
             commission = balance * 0.00025
         if stock_code[:1] in ['5', '6', '9']:
             transfer = balance * 0.00002
         if entrust_bs == 'buy':
-            poundage = commission + transfer
+            poundage = commission + transfer + other
         elif entrust_bs == 'sale':
-            poundage = balance * 0.001 + commission + transfer + 0.5
+            poundage = balance * 0.001 + commission + transfer + other
         return round(poundage, 2)
 
     def update_entrust(self, cr, uid, context=None):
@@ -268,6 +270,10 @@ class StockEntrust(osv.osv):
                             entrust.stock_code,
                             entrust.business_price * entrust.business_amount,
                             entrust.entrust_bs)
+                elif entrust.state == 'done' and entrust.entrust_bs == 'buy':
+                    # 买入以最终成交价格为准
+                    enable_balance = section.enable_balance + entrust.entrust_price * entrust.entrust_amount
+                    enable_balance = enable_balance - entrust.business_price * entrust.business_amount
                 elif entrust.state == 'cancel' and entrust.entrust_bs == 'buy':
                     # 撤单 将资金加回 仓段可用资金
                     enable_balance = section.enable_balance + entrust.entrust_price * entrust.entrust_amount + self.get_poundage(
