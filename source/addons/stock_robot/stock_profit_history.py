@@ -3,6 +3,7 @@
 from openerp.osv import fields, osv
 import logging
 from datetime import datetime
+from util.trading_date import *
 import pytz
 
 _logger = logging.getLogger(__name__)
@@ -114,9 +115,14 @@ class StockProfitHistory(osv.osv):
         tz = pytz.timezone('Asia/Shanghai')
         return datetime.now(tz).date()
 
-    def run_update_profit_history(self, cr, uid, context=None):
+    def get_now_time(self):
+        """获取当前时间"""
+        tz = pytz.timezone('Asia/Shanghai')
+        return datetime.now(tz)
+
+    def update_profit_history(self, cr, uid, context=None):
         """
-        更新盈亏历史定时任务
+        更新盈亏历史
         :param cr:
         :param uid:
         :param context:
@@ -225,3 +231,16 @@ class StockProfitHistory(osv.osv):
                         'principal': principal
                     }, context=context)
                     cr.commit()
+
+    def run_update_profit_history(self, cr, uid, context=None):
+        """
+        更新盈亏历史定时任务
+        :param cr:
+        :param uid:
+        :param context:
+        :return:
+        """
+
+        if is_trading_date(self.get_now_time()):
+             _logger.debug(u">>>>>>>>>> 当前日期是交易日")
+             self.update_profit_history(cr, uid, context=context)
