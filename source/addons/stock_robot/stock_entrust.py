@@ -115,10 +115,6 @@ class StockEntrust(osv.osv):
                 if section.enable_balance < handle_balance:
                     raise osv.except_osv(u"错误", u"仓段可用资金不足,无法买入")
 
-            # 调用买入股票接口(返回的委托单号)
-            vals['entrust_no'] = self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
-                                                int(vals['entrust_amount']),
-                                                context)
             # 如果是仓段委托单 更新可用资金资金
             if vals['section_id']:
                 section = section_cr.browse(cr, uid, vals['section_id'], context=context)
@@ -131,6 +127,10 @@ class StockEntrust(osv.osv):
                 }, context=context)
                 cr.commit()
 
+            # 调用买入股票接口(返回的委托单号)
+            vals['entrust_no'] = self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
+                                                int(vals['entrust_amount']),
+                                                context)
         else:
             # 卖出
             # 检查是否持有该股票
@@ -144,6 +144,7 @@ class StockEntrust(osv.osv):
             position = position_cr.browse(cr, uid, ids, context=context)
             if position.enable_amount < vals['entrust_amount']:
                 raise osv.except_osv(u"错误", u"没有足够的可卖数量,无法卖出")
+
             vals['entrust_no'] = self.sell_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
                                                  int(vals['entrust_amount']),
                                                  context)
