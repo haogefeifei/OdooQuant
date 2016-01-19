@@ -49,7 +49,7 @@
                     <field name="day_profits_rate_str" string="日盈亏率"/>
                     <field name="day_profits" string="日盈亏额"/>
                     <field name="unstable_profits" string="浮动盈亏"/>
-                    <field name="unstable_profits_rate" string="浮动盈亏率"/>
+                    <field name="unstable_profits_rate_str" string="浮动盈亏率"/>
                     <field name="sum_balance" string="盈亏"/>
                     <field name="sum_balance_rate_str" string="盈亏率"/>
                     <field name="total_account" string="账户总资产"/>

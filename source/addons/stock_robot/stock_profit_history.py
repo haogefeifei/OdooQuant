@@ -14,7 +14,6 @@ class StockProfitHistory(osv.osv):
     盈亏历史
     """
 
-    # TODO 计算仍然有问题
     def _get_line_profit_rate(self, cr, uid, ids, field_names, arg, context=None):
         """计算动态字段
         """
@@ -41,20 +40,26 @@ class StockProfitHistory(osv.osv):
             # 盈亏率
             sum_balance_rate = 0
             if history_obj.principal != 0:
-                history_obj.sum_balance / history_obj.principal
+                sum_balance_rate = (total_account - history_obj.principal) / history_obj.principal
             sum_balance_rate_str = str("%.2f" % (sum_balance_rate * 100)) + "%"
             # 浮动盈亏率
             unstable_profits_rate = 0
             day_profits_rate = 0
             if total_account+ history_obj.day_profits != 0:
                 day_profits_rate = history_obj.day_profits / (total_account + history_obj.day_profits)
+            if history_obj.unstable_profits - total_account != 0:
+                unstable_profits_rate = history_obj.unstable_profits / (total_account - history_obj.unstable_profits)
 
             for field in field_names:
                 result[id][field] = 0
                 if field == 'unstable_profits_rate':
                     result[id][field] = unstable_profits_rate
+                elif field == 'unstable_profits_rate_str':
+                    result[id][field] = str("%.2f" % (unstable_profits_rate * 100)) + "%"
                 elif field == 'sum_balance_rate':
                     result[id][field] = sum_balance_rate
+                elif field == 'sum_balance_rate_str':
+                    result[id][field] = str("%.2f" % (sum_balance_rate * 100)) + "%"
                 elif field == 'total_account':
                     result[id][field] = total_account
                 elif field == 'sum_balance_rate_str':
