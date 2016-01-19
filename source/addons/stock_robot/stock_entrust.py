@@ -151,6 +151,7 @@ class StockEntrust(osv.osv):
 
         vals['pwd'] = "******"  # 处理掉交易密码
         id = super(StockEntrust, self).create(cr, uid, vals, context)
+        cr.commit()
 
         # 更新所有数据
         position_cr.run_update(cr, uid, context=context)
