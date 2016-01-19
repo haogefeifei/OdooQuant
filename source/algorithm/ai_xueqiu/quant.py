@@ -12,6 +12,7 @@ class Quant():
     _qt_key = ""
 
     def __init__(self, obj, cr, uid, context):
+        self.obj = obj
         self._qt_key = obj._qt_key
         self.entrust_cr = obj.pool.get("stock.entrust")
         self.position_cr = obj.pool.get("stock.position")
@@ -117,3 +118,23 @@ class Quant():
             return section
         else:
             return None
+
+    def get_setting(self, cr, uid, context=None):
+        """
+        获取策略设置
+        :param cr:
+        :param uid:
+        :param context:
+        :return:
+        """
+        setting_cr = self.obj.pool.get("qt.algorithm.setting")
+        ids = setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id)], context=context)
+        if ids:
+            setting_list = setting_cr.read(cr, uid, ids, ['key', 'value'], context=context)
+            setting_dic = {}
+            print '----------->setting_list:', len(setting_list)
+            map(lambda x: setting_dic.setdefault(x['key'], x['value']), setting_list)
+            print '----------->setting_dic:', setting_dic
+            return
+        else:
+            return {}
