@@ -33,6 +33,7 @@ class QtAlgorithmXueQiu(osv.osv):
 
     @Quant.tick(is_trading_date=True)
     def tick(self, cr, uid, context=None):
+        cr.commit()
         qt = Quant(self, cr, uid, context)
         section = qt.balance_section(cr, uid, context)
         if section != None:

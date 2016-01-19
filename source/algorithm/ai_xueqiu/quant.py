@@ -127,6 +127,7 @@ class Quant():
         :param context:
         :return:
         """
+        cr.commit()
         setting_cr = self.obj.pool.get("qt.algorithm.setting")
         ids = setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id)], context=context)
         if ids:
