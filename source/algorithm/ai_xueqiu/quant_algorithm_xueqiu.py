@@ -38,3 +38,4 @@ class QtAlgorithmXueQiu(osv.osv):
         if section != None:
             _logger.debug(u"----->%s 开始操作->%s" % (qt.algorithm.name, section.name))
             _logger.debug("------>uid:" + str(uid))
+            qt.get_setting(cr, uid, context=context)
