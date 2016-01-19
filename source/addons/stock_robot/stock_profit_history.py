@@ -205,11 +205,13 @@ class StockProfitHistory(osv.osv):
                     unstable_profits += pos.income_balance
 
                 # 计算总盈亏
-                history_ids = history_cr.search(cr, uid, [('section_id', '=', section_id), ('is_section', '=', True)],
-                                                context=context)
-                history_list = history_cr.read(cr, uid, history_ids, ['day_profits'], context=context)
-                for his in history_list:
-                    sum_balance += his['day_profits']
+                # history_ids = history_cr.search(cr, uid, [('section_id', '=', section_id), ('is_section', '=', True)],
+                #                                 context=context)
+                # history_list = history_cr.read(cr, uid, history_ids, ['day_profits'], context=context)
+                # for his in history_list:
+                #     sum_balance += his['day_profits']
+
+                sum_balance =  cash + market_value - section.init_worth
 
                 ids = history_cr.search(cr, uid, [('date', '=', today), ('section_id', '=', section_id),
                                                   ('is_section', '=', True)], context=context)
