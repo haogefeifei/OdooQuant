@@ -133,12 +133,47 @@ class Quant():
         :return:
         """
         ids = self.setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id)], context=context)
+        setting_dic = {}
         if ids:
             setting_list = self.setting_cr.read(cr, uid, ids, ['key', 'value'], context=context)
-            setting_dic = {}
-            print '----------->setting_list:', len(setting_list)
             map(lambda x: setting_dic.setdefault(x['key'], x['value']), setting_list)
-            print '----------->setting_dic:', setting_dic
-            return
+            return setting_dic
         else:
-            return {}
+            return setting_dic
+
+    def put_setting(self, cr, uid, key, value, context=None):
+        """
+        修改策略设置
+        :param cr:
+        :param uid:
+        :param context:
+        :return:
+        """
+        ids = self.setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id), ('key', '=', key)], context=context)
+        if ids:
+            self.setting_cr.write(cr, uid, ids, {
+                    'value': str(value)
+                }, context=context)
+            cr.commit()
+        else:
+            self.setting_cr.create(cr, uid, {
+                    'key': str(key),
+                    'value': str(value)
+                }, context=context)
+            cr.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
