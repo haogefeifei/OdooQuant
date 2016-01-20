@@ -3,6 +3,7 @@
 import logging
 import functools
 import time
+import openerp
 from datetime import datetime
 
 _logger = logging.getLogger(__name__)
@@ -17,6 +18,7 @@ class Quant():
         self.entrust_cr = obj.pool.get("stock.entrust")
         self.position_cr = obj.pool.get("stock.position")
         self.algorithm_cr = obj.pool.get("qt.algorithm")
+        self.setting_cr = obj.pool.get("qt.algorithm.setting")
         self.section_cr = obj.pool.get("qt.balance.section")
         self.algorithm_log_cr = obj.pool.get("qt.algorithm.log")
         self.algorithm = None
@@ -78,6 +80,9 @@ class Quant():
                     return
                 start = time.clock()
                 _logger.debug(u'>>>>>>>>>>>> tick run <%s> start' % function.__name__)
+                for arg in args:
+                    if isinstance(arg, openerp.sql_db.Cursor):
+                        arg.commit()
                 rst = function(*args, **kwargs)
                 _logger.debug(u'>>>>>>>>>>>> tick run <%s> stop >耗时:%s' % (
                     function.__name__, str("%.2f" % (time.clock() - start))))
@@ -127,11 +132,9 @@ class Quant():
         :param context:
         :return:
         """
-        cr.commit()
-        setting_cr = self.obj.pool.get("qt.algorithm.setting")
-        ids = setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id)], context=context)
+        ids = self.setting_cr.search(cr, uid, [('algorithm_id', '=', self.algorithm.id)], context=context)
         if ids:
-            setting_list = setting_cr.read(cr, uid, ids, ['key', 'value'], context=context)
+            setting_list = self.setting_cr.read(cr, uid, ids, ['key', 'value'], context=context)
             setting_dic = {}
             print '----------->setting_list:', len(setting_list)
             map(lambda x: setting_dic.setdefault(x['key'], x['value']), setting_list)
