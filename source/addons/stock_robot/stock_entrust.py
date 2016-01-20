@@ -198,7 +198,7 @@ class StockEntrust(osv.osv):
         commission = 5  # 佣金
         transfer = 0  # 过户费
         poundage = 0
-        other = 0.5 # 其他手续费
+        other = 0.5  # 其他手续费
 
         if balance * 0.00025 > 5:
             commission = balance * 0.00025
@@ -287,17 +287,25 @@ class StockEntrust(osv.osv):
 
                 if entrust.state != 'report':
                     # 挂钩持仓股票
-                    position_ids = position_cr.search(cr, uid, [('section_id', '=', False),
-                                                                ('stock_id.id', '=', entrust.stock_id.id)],
-                                                      context=context)
-                    if position_ids:
-                        position_cr.write(cr, uid, position_ids, {
-                            'section_id': entrust.section_id.id}, context=context)
-
-                    section_cr.write(cr, uid, entrust.section_id.id, {
-                        'enable_balance': enable_balance
-                    }, context=context)
-                    entrust_cr.write(cr, uid, entrust.id, {
-                        'is_clear': True
-                    }, context=context)
-                    cr.commit()
+                    if entrust.entrust_bs == 'buy' and entrust.state == 'done':
+                        position_ids = position_cr.search(cr, uid, [('section_id', '=', False),
+                                                                    ('stock_id.id', '=', entrust.stock_id.id)],
+                                                          context=context)
+                        if position_ids:
+                            position_cr.write(cr, uid, position_ids, {
+                                'section_id': entrust.section_id.id}, context=context)
+                            section_cr.write(cr, uid, entrust.section_id.id, {
+                                'enable_balance': enable_balance
+                            }, context=context)
+                            entrust_cr.write(cr, uid, entrust.id, {
+                                'is_clear': True
+                            }, context=context)
+                            cr.commit()
+                    else:
+                        section_cr.write(cr, uid, entrust.section_id.id, {
+                            'enable_balance': enable_balance
+                        }, context=context)
+                        entrust_cr.write(cr, uid, entrust.id, {
+                            'is_clear': True
+                        }, context=context)
+                        cr.commit()
