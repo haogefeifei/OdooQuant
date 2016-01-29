@@ -28,6 +28,7 @@ class StockEntrust(osv.osv):
         'state': fields.selection((
             ('done', u'已成'),
             ('cancel', u'废单'),
+            ('not_report', u'未报'),
             ('report', u'已报')), u'委托状态'),
         'report_time': fields.datetime(u"申报时间", required=True),
         'stock_code': fields.char(u"证券代码"),
@@ -228,6 +229,8 @@ class StockEntrust(osv.osv):
                 entrust_status = 'report'
             elif entrust['entrust_status'] == u'已成':
                 entrust_status = 'done'
+            elif entrust['entrust_status'] == u'正常':
+                entrust_status = 'not_report'
             else:
                 entrust_status = 'cancel'
             if len(ids) < 1:
