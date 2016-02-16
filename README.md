@@ -14,6 +14,11 @@
 - [Odoo开发文档](https://www.odoo.com/documentation/8.0/)
 - [Odoo绿色版](https://github.com/buke/GreenOdoo)
 
+## Thanks - 感谢
+
+- [easytrader](https://github.com/shidenggui/easytrader)
+
+
 ## License
 
 ```
