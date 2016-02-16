@@ -1,48 +1,46 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+from __future__ import division
 
 import json
-import random
-import urllib
-import re
 import os
-import sys
+import random
+import re
+import urllib
+
 import requests
-import logbook
-from logbook import Logger, StreamHandler
-import helpers
-from base_trader import BaseTrader
-from base_trader import NotLoginError
+import six
 
-logbook.set_datetime_format('local')
-StreamHandler(sys.stdout).push_application()
-log = Logger(os.path.basename(__file__))
+from . import helpers
+from .webtrader import NotLoginError
+from .webtrader import WebTrader
+
+log = helpers.get_logger(__file__)
 
 
-class YJBTrader(BaseTrader):
-    """
-    A股交易
-    """
-
+class YJBTrader(WebTrader):
     config_path = os.path.dirname(__file__) + '/config/yjb.json'
 
     def __init__(self):
-        # super(BaseTrader, self).__init__()
-        BaseTrader.__init__(self)
+        super(YJBTrader, self).__init__()
         self.cookie = None
         self.account_config = None
         self.s = requests.session()
+        self.s.mount('https://', helpers.Ssl3HttpAdapter())
 
-    def login(self):
+    def login(self, throw=False):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko'
         }
         self.s.headers.update(headers)
+
         self.s.get(self.config['login_page'])
 
         verify_code = self.handle_recognize_code()
         if not verify_code:
             return False
-        login_status = self.post_login_data(verify_code)
+        login_status, result = self.post_login_data(verify_code)
+        if login_status == False and throw:
+            raise NotLoginError(result)
         return login_status
 
     def handle_recognize_code(self):
@@ -65,20 +63,23 @@ class YJBTrader(BaseTrader):
         return verify_code
 
     def post_login_data(self, verify_code):
+        if six.PY2:
+            password = urllib.unquote(self.account_config['password'])
+        else:
+            password = urllib.parse.unquote(self.account_config['password'])
         login_params = dict(
                 self.config['login'],
                 mac_addr=helpers.get_mac(),
                 account_content=self.account_config['account'],
-                password=urllib.unquote(self.account_config['password']),
+                password=password,
                 validateCode=verify_code
         )
         login_response = self.s.post(self.config['login_api'], params=login_params)
-        # log.debug('login response: %s' % login_response.text)
+        log.debug('login response: %s' % login_response.text)
 
-        if login_response.text.encode("utf-8").find('上次登陆') != -1:
-            print "----->登录成功!"
-            return True
-        return False
+        if login_response.text.find('上次登陆') != -1:
+            return True, None
+        return False, login_response.text
 
     @property
     def token(self):

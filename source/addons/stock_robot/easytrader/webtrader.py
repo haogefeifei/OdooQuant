@@ -1,44 +1,56 @@
-# -*- coding: utf-8 -*-
-
-import time
+# coding: utf-8
+import json
 import os
 import re
-import helpers
+import time
 from threading import Thread
-import logbook
-from logbook import Logger, StreamHandler
-import sys
 
-logbook.set_datetime_format('local')
-StreamHandler(sys.stdout).push_application()
-log = Logger(os.path.basename(__file__))
+import six
+
+from . import helpers
+
+if six.PY2:
+    import sys
+
+    reload(sys)
+    sys.setdefaultencoding('utf8')
+
+log = helpers.get_logger(__file__)
 
 
 class NotLoginError(Exception):
-    pass
+    def __init__(self, result=None):
+        super(NotLoginError, self).__init__()
+        self.result = result
 
 
-class BaseTrader(object):
+class WebTrader(object):
     global_config_path = os.path.dirname(__file__) + '/config/global.json'
+    config_path = ''
 
     def __init__(self):
         self.__read_config()
         self.trade_prefix = self.config['prefix']
+        self.account_config = ''
         self.heart_active = True
-        # self.heart_thread = Thread(target=self.send_heartbeat, daemon=True)
-        self.heart_thread = Thread(target=self.send_heartbeat)
-
-    def __read_config(self):
-        """读取 config"""
-        self.config = helpers.file2dict(self.config_path)
-        self.global_config = helpers.file2dict(self.global_config_path)
-        self.config.update(self.global_config)
+        if six.PY2:
+            self.heart_thread = Thread(target=self.send_heartbeat)
+            self.heart_thread.setDaemon(True)
+        else:
+            self.heart_thread = Thread(target=self.send_heartbeat, daemon=True)
 
     def read_config(self, path):
-        self.account_config = helpers.file2dict(path)
+        try:
+            self.account_config = helpers.file2dict(path)
+        except json.JSONDecodeError:
+            log.error('配置文件格式有误，请勿使用记事本编辑，推荐使用 notepad++ 或者 sublime text')
+        for v in self.account_config:
+            if type(v) is int:
+                log.warn('配置文件的值最好使用双引号包裹，使用字符串类型，否则可能导致不可知的问题')
 
     def prepare(self, need_data):
-        """登录的统一接口"""
+        """登录的统一接口
+        :param need_data 登录所需数据"""
         self.read_config(need_data)
         self.autologin()
 
@@ -64,7 +76,7 @@ class BaseTrader(object):
         while True:
             if self.heart_active:
                 try:
-                    response = self.get_balance()
+                    response = self.balance
                 except:
                     pass
                 self.check_account_live(response)
@@ -109,6 +121,26 @@ class BaseTrader(object):
         """获取当日委托列表"""
         return self.do(self.config['entrust'])
 
+    @property
+    def exchangebill(self):
+        """
+        默认提供最近30天的交割单, 通常只能返回查询日期内最新的 90 天数据。
+        :return:
+        """
+        # TODO 目前仅在 华泰子类 中实现
+        start_date, end_date = helpers.get_30_date()
+        return self.get_exchangebill(start_date, end_date)
+
+    def get_exchangebill(self, start_date, end_date):
+        """
+        查询指定日期内的交割单
+        :param start_date: 20160211
+        :param end_date: 20160211
+        :return:
+        """
+        # TODO 目前仅在 华泰子类 中实现
+        log.info('目前仅在 华泰子类 中实现, 其余券商需要补充')
+
     def do(self, params):
         """发起对 api 的请求并过滤返回结果
         :param params: 交易所需的动态参数"""
@@ -143,7 +175,9 @@ class BaseTrader(object):
         pass
 
     def format_response_data_type(self, response_data):
-        """格式化返回的值为正确的类型"""
+        """格式化返回的值为正确的类型
+        :param response_data: 返回的数据
+        """
         if type(response_data) is not list:
             return response_data
 
@@ -159,3 +193,6 @@ class BaseTrader(object):
                 except ValueError:
                     continue
         return response_data
+
+    def check_login_status(self, return_data):
+        pass
