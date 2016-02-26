@@ -116,6 +116,11 @@ class StockEntrust(osv.osv):
                 if section.enable_balance < handle_balance:
                     raise osv.except_osv(u"错误", u"仓段可用资金不足,无法买入")
 
+            # 调用买入股票接口(返回的委托单号)
+            vals['entrust_no'] = self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
+                                                int(vals['entrust_amount']),
+                                                context)
+
             # 如果是仓段委托单 更新可用资金资金
             if vals['section_id']:
                 section = section_cr.browse(cr, uid, vals['section_id'], context=context)
@@ -128,10 +133,6 @@ class StockEntrust(osv.osv):
                 }, context=context)
                 cr.commit()
 
-            # 调用买入股票接口(返回的委托单号)
-            vals['entrust_no'] = self.buy_stock(cr, uid, vals['stock_code'], float(vals['entrust_price']),
-                                                int(vals['entrust_amount']),
-                                                context)
         else:
             # 卖出
             # 检查是否持有该股票
@@ -168,6 +169,10 @@ class StockEntrust(osv.osv):
         """
         trader = Trader().trader
         r = trader.buy(code, price=price, amount=amount)
+        # {u'error_no': u'-61', u'error_pathinfo': u'F333002() -> F1333001() -> F2250061()', u'error_info': u'\u5ba2\u6237\u5fc5\u987b\u6709j\u6743\u9650\u624d\u80fd\u5141\u8bb8\u505a\u521b\u4e1a\u677f'}
+        # 异常处理
+        if r.has_key("error_no"):
+            raise osv.except_osv(r["error_pathinfo"])
         return r['entrust_no']
 
     def sell_stock(self, cr, uid, code, price, amount, context=None):
