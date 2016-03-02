@@ -172,7 +172,7 @@ class StockEntrust(osv.osv):
         # {u'error_no': u'-61', u'error_pathinfo': u'F333002() -> F1333001() -> F2250061()', u'error_info': u'\u5ba2\u6237\u5fc5\u987b\u6709j\u6743\u9650\u624d\u80fd\u5141\u8bb8\u505a\u521b\u4e1a\u677f'}
         # 异常处理
         if r.has_key("error_no"):
-            raise osv.except_osv(r["error_pathinfo"])
+            raise osv.except_osv(u"错误", r["error_pathinfo"])
         return r['entrust_no']
 
     def sell_stock(self, cr, uid, code, price, amount, context=None):
