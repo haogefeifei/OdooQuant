@@ -1,5 +1,4 @@
 # coding: utf-8
-import json
 import os
 import re
 import time
@@ -42,7 +41,7 @@ class WebTrader(object):
     def read_config(self, path):
         try:
             self.account_config = helpers.file2dict(path)
-        except json.JSONDecodeError:
+        except ValueError:
             log.error('配置文件格式有误，请勿使用记事本编辑，推荐使用 notepad++ 或者 sublime text')
         for v in self.account_config:
             if type(v) is int:
@@ -120,6 +119,16 @@ class WebTrader(object):
     def get_entrust(self):
         """获取当日委托列表"""
         return self.do(self.config['entrust'])
+
+    @property
+    def current_deal(self):
+        return self.get_current_deal()
+
+    def get_current_deal(self):
+        """获取当日委托列表"""
+        # return self.do(self.config['current_deal'])
+        # TODO 目前仅在 华泰子类 中实现
+        log.info('目前仅在 佣金宝子类 中实现, 其余券商需要补充')
 
     @property
     def exchangebill(self):

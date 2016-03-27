@@ -1,21 +1,32 @@
 # coding: utf-8
+import datetime
 import json
 import os
 import ssl
 import subprocess
 import sys
 import uuid
-import six
-import datetime
 
 import logbook
-from logbook import Logger, StreamHandler
+import six
+from logbook import Logger, StreamHandler, NullHandler
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.poolmanager import PoolManager
 
-logbook.set_datetime_format('local')
-StreamHandler(sys.stdout).push_application()
-log = Logger(os.path.basename(__file__))
+
+def get_logger(name, debug=True):
+    logbook.set_datetime_format('local')
+    handler = StreamHandler(sys.stdout) if debug else NullHandler()
+    handler.push_application()
+    return Logger(os.path.basename(name))
+
+
+def disable_log():
+    global log
+    log = get_logger(__file__, debug=False)
+
+
+log = get_logger(__file__)
 
 
 class Ssl3HttpAdapter(HTTPAdapter):
@@ -23,7 +34,7 @@ class Ssl3HttpAdapter(HTTPAdapter):
         self.poolmanager = PoolManager(num_pools=connections,
                                        maxsize=maxsize,
                                        block=block,
-                                       ssl_version=ssl.PROTOCOL_SSLv3)
+                                       ssl_version=ssl.PROTOCOL_TLSv1)
 
 
 def file2dict(path):
@@ -43,7 +54,7 @@ def get_stock_type(stock_code):
 def recognize_verify_code(image_path, broker='ht'):
     """识别验证码，返回识别后的字符串，使用 tesseract 实现
     :param image_path: 图片路径
-    :param broker: 券商
+    :param broker: 券商 ['ht', 'yjb', 'gf']
     :return recognized: verify code string"""
     if broker in ['ht', 'yjb']:
         verify_code_tool = 'getcode_jdk1.5.jar' if broker == 'ht' else 'yjb_verify_code.jar guojin'
@@ -62,6 +73,8 @@ def recognize_verify_code(image_path, broker='ht'):
             log.debug('recognize output: %s' % out_put)
             verify_code_start = -4
             return out_put[verify_code_start:]
+    elif broker == 'gf':
+        return detect_gf_result(image_path)
     # 调用 tesseract 识别
     # ubuntu 15.10 无法识别的手动 export TESSDATA_PREFIX
     system_result = os.system('tesseract {} result -psm 7'.format(image_path))
@@ -88,6 +101,24 @@ def recognize_verify_code(image_path, broker='ht'):
     return recognized_code
 
 
+def detect_gf_result(image_path):
+    from PIL import ImageFilter, Image
+    import pytesseract
+    img = Image.open(image_path)
+    for x in range(img.width):
+        for y in range(img.height):
+            if img.getpixel((x, y)) < (100, 100, 100):
+                img.putpixel((x, y), (256, 256, 256))
+    gray = img.convert('L')
+    two = gray.point(lambda x: 0 if 68 < x < 90 else 256)
+    min_res = two.filter(ImageFilter.MinFilter)
+    med_res = min_res.filter(ImageFilter.MedianFilter)
+    for _ in range(2):
+        med_res = med_res.filter(ImageFilter.MedianFilter)
+    res = pytesseract.image_to_string(med_res, config='-psm 6')
+    return res.replace(' ', '')
+
+
 def get_mac():
     # 获取mac地址 link: http://stackoverflow.com/questions/28927958/python-get-mac-address
     return ("".join(c + "-" if i % 2 else c for i, c in enumerate(hex(
@@ -101,12 +132,6 @@ def grep_comma(num_str):
 def str2num(num_str, convert_type='float'):
     num = float(grep_comma(num_str))
     return num if convert_type == 'float' else int(num)
-
-
-def get_logger(name):
-    logbook.set_datetime_format('local')
-    StreamHandler(sys.stdout).push_application()
-    return Logger(os.path.basename(name))
 
 
 def get_30_date():
